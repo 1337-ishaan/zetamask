@@ -6,12 +6,15 @@ import DOMPurify from 'dompurify';
  * @returns The value stored at the key provided if the key exists.
  */
 export const getLocalStorage = (key: string): string | null => {
-  const { localStorage: ls } = window;
-  if (ls !== null) {
+  // Fallback to return null if localStorage is not available
+  const ls = typeof window !== 'undefined' ? window.localStorage : null;
+  
+  if (ls) {
     const data = ls.getItem(key);
     return data ? DOMPurify.sanitize(data) : null;
   }
-  throw new Error('Local storage is not available.');
+  
+  return null; // Return null if localStorage is not available
 };
 
 /**
@@ -21,7 +24,7 @@ export const getLocalStorage = (key: string): string | null => {
  * @param value - The value to set.
  */
 export const setLocalStorage = (key: string, value: string) => {
-  const { localStorage: ls } = window;
+  const ls = typeof window !== 'undefined' ? window.localStorage : null;
 
   if (ls !== null) {
     ls.setItem(key, value);
