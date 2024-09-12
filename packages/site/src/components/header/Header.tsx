@@ -79,6 +79,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
   const [state] = useContext(MetaMaskContext);
 
   const { globalState, setGlobalState } = useContext(StoreContext);
+  const [isSnapInstalled,setIsSnapInstalled] = useState(false);
 
   useEffect(() => {
     // Save the global state to localStorage when it changes
@@ -99,13 +100,17 @@ const Header = ({}: HeaderProps): JSX.Element => {
     console.log('Connecting to Zeta snap');
     try {
       await connectSnap();
-      const evmAddress = await getEvmAddress();
-      const btcAddress = await createBtcWallet(isMainnet);
+      setIsSnapInstalled(true);
 
-      if (evmAddress && btcAddress) {
-        setGlobalState({ ...globalState, btcAddress, evmAddress });
+      if(typeof isMainnet === 'boolean'){
+        const evmAddress = await getEvmAddress();
+        const btcAddress = await createBtcWallet(isMainnet); 
+        if (evmAddress && btcAddress) {
+          setGlobalState({ ...globalState, btcAddress, evmAddress });
+        }
       }
     } catch (e) {
+      setIsSnapInstalled(false);
       console.error('Error connecting to Zeta snap:', e);
     }
   };
@@ -125,7 +130,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
     <HeaderWrapper>
       <Logo className="logo" />
       <div className="connect-wallet-wrapper">
-        {state.installedSnap  ? (
+        {isSnapInstalled ? (
           <FlexRowWrapper >
             {!globalState?.btcAddress ? (
               <FlexRowWrapper className="header-section-disconnected">
@@ -156,7 +161,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
             )}
           </FlexRowWrapper>
         ) : (
-          <StyledButton onClick={onConnectSnap}>Install zeTrax</StyledButton>
+          <StyledButton onClick={onConnectSnap}>Install ZetaMask</StyledButton>
         )}
       </div>
     </HeaderWrapper>
