@@ -1,0 +1,80 @@
+{
+  "name": "zetamask",
+  "version": "0.1.1",
+  "description": "The only MetaMask snap allowing users to deposit their native BTC to any supported ZRC20 asset on ZetaChain.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1337-ishaan/zetamask"
+  },
+  "license": "(MIT-0 OR Apache-2.0)",
+  "main": "./dist/bundle.js",
+  "files": [
+    "dist/",
+    "images/",
+    "snap.manifest.json"
+  ],
+  "scripts": {
+    "allow-scripts": "yarn workspace root allow-scripts",
+    "build": "mm-snap build",
+    "build:clean": "yarn clean && yarn build",
+    "clean": "rimraf dist",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path .gitignore",
+    "serve": "mm-snap serve",
+    "start": "mm-snap watch",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@bitcoinerlab/secp256k1": "^1.1.1",
+    "@metamask/snap-types": "^0.23.0",
+    "@metamask/snaps-sdk": "^6.1.1",
+    "bech32": "^2.0.0",
+    "bip32": "^2.0.6",
+    "bip39": "^3.1.0",
+    "bitcoinjs-lib": "^6.1.5",
+    "bitcoinjs-message": "^2.2.0",
+    "bs58check": "^3.0.1",
+    "buffer": "^6.0.3",
+    "dotenv": "^16.4.5",
+    "ecpair": "^2.1.0",
+    "ethers": "^6.13.2",
+    "tiny-secp256k1": "^2.2.3"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.5.0",
+    "@metamask/auto-changelog": "^3.4.2",
+    "@metamask/eslint-config": "^13.0.0",
+    "@metamask/eslint-config-jest": "^13.0.0",
+    "@metamask/eslint-config-nodejs": "^13.0.0",
+    "@metamask/eslint-config-typescript": "^13.0.0",
+    "@metamask/snaps-cli": "^6.2.1",
+    "@metamask/snaps-jest": "8.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jest": "^28.8.0",
+    "eslint-plugin-jsdoc": "^50.2.2",
+    "eslint-plugin-n": "^17.10.2",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-promise": "^7.1.0",
+    "jest": "^29.5.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-packagejson": "^2.2.11",
+    "rimraf": "^3.0.2",
+    "through2": "^4.0.2",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "yarn@3.2.1",
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

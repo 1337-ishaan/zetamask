@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["ES2020", "DOM"],
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noErrorTruncation": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2020",
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "react": ["./node_modules/@types/react"]
+    }
+  }
+}
