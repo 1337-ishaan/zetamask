@@ -46,7 +46,7 @@ const SocialLinks = ({}: SocialLinksProps): JSX.Element => {
       <a
         className="social"
         rel="noopener noreferrer"
-        href="https://etherates-organization.gitbook.io/zetamask"
+        href="https://docs.zetamask.com"
       >
         <GitbookLogo className="social-logo" />
       </a>

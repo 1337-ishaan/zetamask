@@ -276,7 +276,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
                 Destination Address
               </Typography>
               <a
-                href="https://etherates-organization.gitbook.io/zetamask/bridge-btc-to-zrc20-asset#custom-memo"
+                href="https://docs.zetamask.com/bridge-btc-to-zrc20-asset#custom-memo"
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -3,6 +3,8 @@ import Typography from '../utils/Typography';
 import FlexColumnWrapper from '../utils/wrappers/FlexColumnWrapper';
 import FlexRowWrapper from '../utils/wrappers/FlexRowWrapper';
 import SocialLinks from '../utils/SocialLinks';
+import { StoreContext } from '../../hooks/useStore';
+import React, { useContext } from 'react';
 
 const DisconnectedWrapper = styled(FlexRowWrapper)`
   width: 80vw;
@@ -16,7 +18,14 @@ const DisconnectedWrapper = styled(FlexRowWrapper)`
 
 interface DisconnectedProps {}
 
+
 const Disconnected = ({}: DisconnectedProps): JSX.Element => {
+  const { globalState, setGlobalState } = useContext(StoreContext);
+
+  React.useEffect(() => {
+    setGlobalState({...globalState, isMainnet: globalState?.isMainnet ?? false})
+  },[])
+
   return (
     <DisconnectedWrapper>
       <FlexColumnWrapper className="supported-resources">
