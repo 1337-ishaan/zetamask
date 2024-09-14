@@ -15,9 +15,12 @@ const TrxHistoryWrapper = styled.div`
   box-shadow: 0px 0px 21px 5px rgba(0, 0, 0, 1);
   color: #dadada;
   padding: 24px;
+  transition:all .4s;
+
   overflow-x: hidden;
   border-radius: ${(props) => props.theme.borderRadius};
   height: 360px;
+  width:auto;
   overflow-y: auto;
   scrollbar-width: none; /* For Firefox */
   -ms-overflow-style: none; /* For Internet Explorer and Edge */
@@ -159,6 +162,7 @@ const TrxHistory: React.FC = () => {
         </div>
       )}
       {isRefetched ? (
+
         <Loader />
       ) : (
         

@@ -123,12 +123,6 @@ const SendWrapper = styled.div`
 interface SendProps {
   setIsSendModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-// Define the interface for the fees object
-interface Fees {
-  high_fee_per_kb: number;
-  // Add other properties if needed
-}
-
 
 const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
   const [trxInput, setTrxInput] = useState<any>({});
@@ -183,13 +177,13 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
       const getFees = async () => {
         let fees = await getBtcFees();
         //@ts-ignore next line
-        setDepositFees(fees?.low_fee_per_kb)//fees?.high_fee_per_kb * 0.001 * 68 * 2) // DepositFee = AverageFeeRateBlockX (fee/1000 sat/vB) × GasPriceMultiplier(68vB) ×DepositIncurredVBytes(2);
+        setDepositFees(fees)
       };
       getFees();
       return () => {};
     }
   }, []);
-
+  console.log(depositFees,'deposit fees');
   const CustomItemRenderer = ({ option }: any) => (
     <div className="dropdown-item">
       <div className="icon-symbol-wrapper">
@@ -228,9 +222,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
           options={zrc20Assets}
           contentRenderer={() => (
             <div key={trxInput.key}>
-              <>
                 <CustomItemRenderer option={selectedZrc20} />
-              </>
             </div>
           )}
           valueField="symbol"
@@ -363,7 +355,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
       <StyledButton
         disabled={
           (currentActive === 'zeta' ? !amount : !amount || !selectedZrc20) 
-          //|| maxFunds < 0
+          || maxFunds < 0
         }
         onClick={sendTrx}
       >

@@ -114,6 +114,7 @@ const Balances = ({}: BalancesProps): JSX.Element => {
           const result = (await getBalanceAndRate(
             globalState.evmAddress as string,
           )) as ZetaBalanceResponse;
+          console.log(result,'result balance');
 
           const maps: BalanceData[] = result?.nonZeta?.map((t) => ({
             label: t.token.symbol,

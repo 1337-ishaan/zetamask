@@ -40,7 +40,7 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
   }
 
   switch (request.method) {
-    case 'create-btc-wallet':
+    case 'derive-btc-wallet':
       return deriveBtcWallet(request);
     case 'get-btc-utxo':
       return getBtcUtxo();

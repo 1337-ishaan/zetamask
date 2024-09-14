@@ -66,8 +66,6 @@ const HeaderWrapper = styled(FlexRowWrapper)`
       }
     }
 
-
-
     .header-section-disconnected{
         column-gap:16px;
     }
@@ -77,7 +75,6 @@ interface HeaderProps {}
 
 const Header = ({}: HeaderProps): JSX.Element => {
   const [state] = useContext(MetaMaskContext);
-
   const { globalState, setGlobalState } = useContext(StoreContext);
   const [isSnapInstalled,setIsSnapInstalled] = useState(false);
 
@@ -102,7 +99,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
       await connectSnap();
       setIsSnapInstalled(true);
 
-      if(typeof isMainnet === 'boolean'){
+      if(typeof isMainnet !== 'undefined'){
         const evmAddress = await getEvmAddress();
         const btcAddress = await createBtcWallet(isMainnet); 
         if (evmAddress && btcAddress) {
@@ -115,6 +112,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
     }
   };
 
+  console.log(isSnapInstalled,'is snap installed');
   // Disconnect from the Zeta snap
   const onDisconnectSnap = async () => {
     try {
@@ -130,7 +128,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
     <HeaderWrapper>
       <Logo className="logo" />
       <div className="connect-wallet-wrapper">
-        {isSnapInstalled ? (
+        {(state.installedSnap || isSnapInstalled) ? (
           <FlexRowWrapper >
             {!globalState?.btcAddress ? (
               <FlexRowWrapper className="header-section-disconnected">

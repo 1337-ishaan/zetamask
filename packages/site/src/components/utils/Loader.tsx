@@ -23,12 +23,13 @@ const rotate = keyframes`
 // Create a Styled Component for the loader
 const LoaderWrapper = styled.div`
   width: 200px; /* Adjust size as needed */
-  height: 100px; /* Adjust size as needed */
+  height: 200px; /* Adjust size as needed */
   animation: ${rotate} 1.2s linear infinite; /* Apply animation */
   display: flex;
   column-gap: 16px;
   justify-content: center;
   margin: auto;
+  transition:all .4s;
 `;
 
 // React component

@@ -21,6 +21,7 @@ const TrxRowWrapper = styled(FlexRowWrapper)`
   align-items: center;
   column-gap: 48px;
   justify-content: space-between;
+  
   .redirect-icon {
     width: 16px;
     height: 16px;

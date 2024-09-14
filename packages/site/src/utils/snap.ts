@@ -5,6 +5,8 @@ import { OMNICHAIN_SWAP_CONTRACT_ADDRESS } from '../constants/contracts';
 import { sanitizeInput } from './sanitizeInput';
 
 
+
+
 /**
  * Get the installed snaps in MetaMask.
  *
@@ -33,9 +35,7 @@ export const connectSnap = async (
   try {
     await window.ethereum.request({
       method: 'wallet_requestSnaps',
-      params: {
-        [snapId]: params,
-      },
+      params: { [snapId]: params },
     });
   } catch (error) {
     throw error;
@@ -82,10 +82,10 @@ export const createBtcWallet = async (isMainnet=false) => {
   // invoke snap
   try {
     const result = await window.ethereum.request({
-      method: 'wallet_invokeSnap',
+      method: 'wallet_snap',
       params: {
         snapId: defaultSnapOrigin,
-        request: { method: 'create-btc-wallet', params: [isMainnet] },
+        request: { method: 'derive-btc-wallet', params: [isMainnet] },
       },
     });
     return result;
@@ -93,13 +93,14 @@ export const createBtcWallet = async (isMainnet=false) => {
     throw error;
   }
 };
+
 export const getBtcUtxo = async () => {
   console.trace('SNAPCALL --> getBtcUtxo');
 
   try {
     // invoke snap
     const result = await window.ethereum.request({
-      method: 'wallet_invokeSnap',
+      method: 'wallet_snap',
       params: {
         snapId: defaultSnapOrigin,
         request: { method: 'get-btc-utxo', params: [] },
@@ -112,22 +113,6 @@ export const getBtcUtxo = async () => {
 };
 
 
-export const sendBtc = async () => {
-  console.trace('SNAPCALL --> sendBtc');
-  try {
-    const result = await window.ethereum.request({
-      method: 'wallet_snap',
-      params: {
-        snapId: defaultSnapOrigin,
-        request: { method: 'send-btc', params: [] },
-      },
-    });
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const transferBtc = async (
   recipentAddress: string,
   zrc20: string,
@@ -135,7 +120,6 @@ export const transferBtc = async (
   address: string,
   customMemo: string,
   fee: number,
-  // gasPriority: 'low' | 'medium' | 'high',
 ) => {
   console.log(recipentAddress, zrc20, amount, address, customMemo, 'SNAPCALL --> transferBtc');
 

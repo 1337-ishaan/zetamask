@@ -1,13 +1,32 @@
 {
   "name": "zetamask",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "The only MetaMask snap allowing users to deposit their native BTC to any supported ZRC20 asset on ZetaChain.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/1337-ishaan/zetamask"
   },
+  "keywords": [
+    "metamask",
+    "snap",
+    "metamask-snap",
+    "zetachain",
+    "blockchain",
+    "web3",
+    "cryptocurrency",
+    "wallet",
+    "ethereum",
+    "defi",
+    "cross-chain",
+    "interoperability",
+    "smart-contract",
+    "dapp",
+    "crypto",
+    "omnichain"
+  ],
   "license": "(MIT-0 OR Apache-2.0)",
   "main": "./dist/bundle.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/",
     "images/",

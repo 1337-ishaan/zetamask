@@ -17,6 +17,7 @@ import {
   MAINNET_ZETA_TSS,
   TESTNET_ZETA_TSS,
 } from '../constants';
+
 import { Box, Link, Heading } from '@metamask/snaps-sdk/jsx';
 
 let isMainnet = false;
@@ -112,8 +113,8 @@ export const getBtcUtxo = async () => {
         `${isMainnet ? MAINNET_BLOCKCYPHER_API : TESTNET_BLOCKCYPHER_API}/addrs/${address}/full`,
       );
 
-      const utxoData = await utxo.text();
-      return utxoData ? JSON.parse(utxoData) : { txs: [] };
+      const utxoData = await utxo.json();
+      return utxoData ? utxoData : { txs: [] };
     } else {
       throw new Error('Failed to create Bitcoin testnet address.');
     }
@@ -135,8 +136,8 @@ export const getFees = async () => {
     if (!utxo.ok) {
       throw new Error('Failed to fetch fees.');
     }
-    const utxoData = await utxo.text();
-    return JSON.parse(utxoData);
+    const utxoData = await utxo.json();
+    return utxoData.high_fee_per_kb * 0.001 * 68 * 2;
   } catch (error) {
     console.error('Error getting fees:', error);
     throw new Error('Failed to retrieve fees.');
@@ -211,55 +212,11 @@ export const getTrxByHash = async (previousTxHash: string) => {
       throw new Error('Failed to fetch transaction by hash.');
     }
 
-    const stringData = await response.text();
-    return JSON.parse(stringData);
-  } catch (error) {
-    console.error('Error getting transaction by hash:', error);
-    return { error: 'Failed to retrieve transaction.' };
-  }
-};
-
-/**
- * Retrieves the raw transaction hex by transaction hash.
- * @param previousTxHash - The hash of the previous transaction.
- * @returns The transaction hex string.
- */
-export const getTrxHex = async (previousTxHash: string) => {
-  try {
-    const response: Response = await fetch(
-      `${isMainnet ? MAINNET_BLOCKSTREAM_API : TESTNET_BLOCKSTREAM_API}/tx/${previousTxHash}/hex`,
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch transaction hex.');
-    }
-
-    const stringData = await response.text();
+    const stringData = await response.json();
     return stringData;
   } catch (error) {
-    console.error('Error getting transaction hex:', error);
-    return { error: 'Failed to retrieve transaction hex.' };
-  }
-};
-
-/**
- * Retrieves transactions associated with a specific Bitcoin address.
- * @param address - The Bitcoin address to check.
- * @returns The transaction references.
- */
-export const getTrxsByAddress = async (address: string) => {
-  try {
-    const response: Response = await fetch(
-      `${isMainnet ? MAINNET_BLOCKCYPHER_API : TESTNET_BLOCKCYPHER_API}/addrs/${address}`,
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch transactions by address.');
-    }
-
-    const stringData = await response.text();
-    return JSON.parse(stringData);
-  } catch (error) {
-    console.error('Error getting transactions by address:', error);
-    throw new Error('Failed to retrieve transactions.');
+    console.error('Error getting transaction by hash:', error);
+    throw new Error('Failed to retrieve transaction.')
   }
 };
 
@@ -273,8 +230,8 @@ const fetchUtxo = async (btcAddress: string) => {
     const utxo = await fetch(
       `${isMainnet ? MAINNET_BLOCKSTREAM_API : TESTNET_BLOCKSTREAM_API}/address/${btcAddress}/utxo`,
     );
-    const utxoData = await utxo.text();
-    return JSON.parse(utxoData);
+    const utxoData = await utxo.json();
+    return utxoData;
   } catch (error) {
     console.error('Error fetching UTXO:', error);
     throw new Error('Failed to fetch UTXO.');
@@ -459,7 +416,7 @@ export const transactBtc = async (request: any) => {
       throw new Error(`Cross-chain swap failed. ${error}`);
     }
   } else {
-    return { error: 'User Rejected' };
+    throw new Error('User Rejected')
   }
 };
 
@@ -474,14 +431,14 @@ export const trackCctxTx = async (request: any) => {
     const cctxIndex = await fetch(
       `${isMainnet ? MAINNET_ZETA_BLOCKPI : TESTNET_ZETA_BLOCKPI}/zeta-chain/crosschain/inTxHashToCctx/${request.params[0]}`,
     );
-    const cctxData = await cctxIndex.text();
-    let cctx = JSON.parse(cctxData);
-    const utxo = await fetch(
+    const cctxIndexData = await cctxIndex.json();
+    let cctx = cctxIndexData;
+    const cctxInfo = await fetch(
       `${isMainnet ? MAINNET_ZETA_BLOCKPI : TESTNET_ZETA_BLOCKPI}/zeta-chain/crosschain/cctx/${cctx.inboundHashToCctx.cctx_index[0]}`,
     );
 
-    const utxoData = await utxo.text();
-    return JSON.parse(utxoData);
+    const cctxInfoData = await cctxInfo.json();
+    return cctxInfoData;
   } catch (error) {
     console.error('Error tracking cross-chain transaction:', error);
     throw new Error('Failed to track cross-chain transaction.');
@@ -513,16 +470,16 @@ export const getBalanceAndRate = async (request: any) => {
       const zetaPriceResponse = await fetch(
         'https://api.coingecko.com/api/v3/simple/price?ids=zetachain&vs_currencies=usd',
       );
-      const zetaPriceData = await zetaPriceResponse.text();
+      const zetaPriceData = await zetaPriceResponse.json();
 
-      const zetaPrice = JSON.parse(zetaPriceData).zetachain.usd;
+      const zetaPrice = zetaPriceData.zetachain.usd;
 
-      const zetaData = await zeta.text();
-      const nonZetaData = await nonZeta.text();
+      const zetaData = await zeta.json();
+      const nonZetaData = await nonZeta.json();
 
       return {
-        zeta: JSON.parse(zetaData),
-        nonZeta: JSON.parse(nonZetaData),
+        zeta: zetaData,
+        nonZeta: nonZetaData,
         zetaPrice,
         btcPrice,
       };
