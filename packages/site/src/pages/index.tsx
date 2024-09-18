@@ -17,14 +17,17 @@ import SocialLinks from '../components/utils/SocialLinks';
 const AppWrapper = styled(FlexColumnWrapper)`
   padding: 16px 32px;
   margin: 0 auto;
-  height: fit-content;
-
   .action-balances-wrapper {
     column-gap: 24px;
+    @media (min-width: 1440px) {
+      margin-top: 10vh;
+    }
   }
+ 
+
   @keyframes animateDropShadow {
     0% { filter: drop-shadow(0 0 160px #676767); }
-    50% { filter: drop-shadow(0 0 0px #676767); }
+    50% { filter: drop-shadow(0 0 0px #eee); }
     100% { filter: drop-shadow(0 0 160px #676767); }
   }
     .page-bg-logo {
@@ -35,7 +38,7 @@ const AppWrapper = styled(FlexColumnWrapper)`
       opacity: 0.1;
       z-index: 1;
       
-      animation: animateDropShadow 3s infinite;
+      animation: animateDropShadow 5s infinite;
    
     }
   }
@@ -55,10 +58,16 @@ const Index = () => {
 
   const isBtcAddressPresent = !!globalState?.btcAddress;
   return (
-    <AppWrapper style={{ rowGap: isBtcAddressPresent ? 'unset' : '15vh' }}>
+    <AppWrapper
+      style={{
+        // justifyContent: isBtcAddressPresent ? 'space-evenly' : 'center',
+        rowGap: isBtcAddressPresent ? 'unset' : '15vh',
+        // justifyContent: isBtcAddressPresent ? 'space-evenly' : 'center',
+      }}
+    >
       <Logo className="page-bg-logo" />
       <Header />
-      {!!globalState?.btcAddress ? (
+      {!!globalState?.btcAddress && isMetaMaskReady ? (
         <FlexRowWrapper className="action-balances-wrapper">
           <FlexColumnWrapper className="trx-transact-wrapper">
             <SocialLinks />

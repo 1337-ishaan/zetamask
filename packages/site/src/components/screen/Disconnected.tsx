@@ -10,6 +10,8 @@ const DisconnectedWrapper = styled(FlexRowWrapper)`
   width: 80vw;
   column-gap: 44px;
   z-index: 1;
+  justify-content: center;
+
   .supported-resources {
     width: 50%;
     row-gap: 40px;

@@ -1,5 +1,5 @@
 {
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "ZetaMask written in TypeScript.",
   "proposedName": "ZetaMask",
   "repository": {
@@ -7,7 +7,7 @@
     "url": "git+https://github.com/1337-ishaan/zetamask"
   },
   "source": {
-    "shasum": "1gG5jPVbWmCbu+UhHzmoDTSY6f40Tecxbeptw7PbS+g=",
+    "shasum": "NGcdrGpuRCt4xUTgne8zX+u0/WXm2S7SIQu+F+xgGck=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",

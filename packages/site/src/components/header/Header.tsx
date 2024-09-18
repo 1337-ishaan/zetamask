@@ -23,6 +23,7 @@ import Typography from '../utils/Typography';
 const HeaderWrapper = styled(FlexRowWrapper)`
   justify-content: space-between;
   padding: 32px 0;
+
   .logo {
     height: 48px;
     width: 48px;
@@ -74,7 +75,7 @@ const HeaderWrapper = styled(FlexRowWrapper)`
     .t-current-network{
       position:absolute;
       top:6px;
-      right:-40px;
+      right:-44px;
       background-color: rgba(255,255,0,1);
       border:1px solid #000;
       border-radius: 20px;
@@ -111,6 +112,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
     try {
       await connectSnap();
       setIsSnapInstalled(true);
+      console.log(isSnapInstalled);
 
       if (typeof isMainnet !== 'undefined') {
         const evmAddress = await getEvmAddress();
