@@ -1,41 +1,43 @@
 # ZetaMask Snap
 
 ## Overview
-ZetaMask Snap allows users to interact with Bitcoin and ZetaChain through various JSON-RPC methods.
 
+ZetaMask Snap allows users to interact with Bitcoin and ZetaChain through various JSON-RPC methods.
 
 The ZetaMask Snap is a powerful tool that enhances the functionality of MetaMask, allowing users to seamlessly interact with both Bitcoin and ZetaChain. By providing a suite of JSON-RPC methods, this snap enables developers to build innovative applications that leverage the strengths of both ecosystems.
 
 From a user's perspective, the ZetaMask Snap offers several benefits that enhance their interaction with the ZetaChain ecosystem:
 
-*   **Seamless Bitcoin Integration**: The ZetaMask Snap allows users to easily access and manage their Bitcoin assets directly within MetaMask, making it simpler to engage with ZetaChain and its applications.
-*   **Streamlined User Experience**: The snap's user-friendly interface and comprehensive features ensure a smooth and intuitive experience for users, encouraging them to explore and utilize the ZetaChain ecosystem more extensively.
-*   **Expanded Access to ZetaChain**: By providing a convenient gateway to ZetaChain through MetaMask, the ZetaMask Snap enables users to discover and interact with a broader range of ZetaChain-based applications and services.
+- **Seamless Bitcoin Integration**: The ZetaMask Snap allows users to easily access and manage their Bitcoin assets directly within MetaMask, making it simpler to engage with ZetaChain and its applications.
+- **Streamlined User Experience**: The snap's user-friendly interface and comprehensive features ensure a smooth and intuitive experience for users, encouraging them to explore and utilize the ZetaChain ecosystem more extensively.
+- **Expanded Access to ZetaChain**: By providing a convenient gateway to ZetaChain through MetaMask, the ZetaMask Snap enables users to discover and interact with a broader range of ZetaChain-based applications and services.
 
 ## Available Methods
+
 **Note:** If an error occurs, the return type is a string. It is recommended to use the try-catch-finally pattern for better error handling.
 
-
 ### 0. `wallet_requestSnaps`
+
 - **Description**: Installs the ZetaMask Snap, which is the first step required to use the below mentioned API methods.
 - **Parameters**: None.
 - **Implementation**:
+
 ```javascript
 const result = await window.ethereum.request({
   method: 'wallet_requestSnaps',
-  params: { [snapId]: {} }, // default [snapId] params = {} 
+  params: { [snapId]: {} }, // default [snapId] params = {}
 });
 ```
 
 **Note:** If the user hasn't installed the MetaMask Snap, none of the API methods will function.
 
-
-
 ### 1. `derive-btc-wallet`
+
 - **Description**: Creates a Bitcoin wallet address based on the provided BIP32 public key.
-- **Parameters**: 
+- **Parameters**:
   - `isMainnet`: Boolean indicating whether to use the mainnet or testnet.
 - **Implementation**:
+
 ```javascript
 const btcWallet = await window.ethereum.request({
   method: 'wallet_snap',
@@ -43,23 +45,24 @@ const btcWallet = await window.ethereum.request({
     snapId: defaultSnapOrigin,
     request: {
       method: 'derive-btc-wallet',
-      params: [isMainnet]
+      params: [isMainnet],
     },
   },
 });
 ```
+
 - **Mock Successful Response**:
+
 ```JSON
     "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" |"tb1qex3zpp07a0ctu8x00ah4mnyess0900a2dklttr" // mainnet || testnet
 ```
 
-
-
-
 ### 2. `get-btc-utxo`
+
 - **Description**: Fetches unspent transaction outputs (UTXOs) for the connected Bitcoin account.
 - **Parameters**: None.
 - **Implementation**:
+
 ```javascript
 const btcUtxo = await window.ethereum.request({
   method: 'wallet_snap',
@@ -67,12 +70,14 @@ const btcUtxo = await window.ethereum.request({
     snapId: defaultSnapOrigin,
     request: {
       method: 'get-btc-utxo',
-      params: [isMainnet]
+      params: [isMainnet],
     },
   },
 });
 ```
+
 - **Mock Successful Response**:
+
 ```JSON
 {
   "address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
@@ -109,12 +114,13 @@ const btcUtxo = await window.ethereum.request({
 }
 ```
 
-
 ### 3. `get-deposit-fees`
-- **Description**: Retrieves the current Bitcoin deposit transaction fees 
-```ZetaChain deposit fees = (high_priority_fees_in_kb * 0.001)vB * 68vB * 2```.
+
+- **Description**: Retrieves the current Bitcoin deposit transaction fees
+  `ZetaChain deposit fees = (high_priority_fees_in_kb * 0.001)vB * 68vB * 2`.
 - **Parameters**: None.
 - **Implementation**:
+
 ```javascript
 const depositFees = await window.ethereum.request({
   method: 'wallet_snap',
@@ -126,16 +132,20 @@ const depositFees = await window.ethereum.request({
   },
 });
 ```
+
 - **Mock Successful Response**:
+
 ```JSON
     945910 // (sats)
 ```
 
 ### 4. `get-balance-and-rate`
+
 - **Description**: Retrieves the balance for a given address and exchange rates for Zeta and Bitcoin.
-- **Parameters**: 
+- **Parameters**:
   - `address`: The Zeta or Ethereum address to check.
 - **Implementation**:
+
 ```javascript
 const balanceAndRate = await window.ethereum.request({
   method: 'wallet_snap',
@@ -143,12 +153,14 @@ const balanceAndRate = await window.ethereum.request({
     snapId: defaultSnapOrigin,
     request: {
       method: 'get-balance-and-rate',
-      params: [evmAddress]
+      params: [evmAddress],
     },
   },
 });
 ```
+
 - **Mock Successful Response**:
+
 ```JSON
 {
   "zeta": {
@@ -182,12 +194,16 @@ const balanceAndRate = await window.ethereum.request({
 ```
 
 ### 5. `transact-btc`
+
 - **Description**: Executes a cross-chain swap transaction for Bitcoin.
-- **Parameters**: 
+- **Parameters**:
+  - `recipientAddress`: The address to receive the Bitcoin.
+  - `ZRC20ContractAddress`: The address of the ZRC20 contract to interact with.
+  - `customMemo`: Optional custom memo for the transaction.
+  - `depositFee`: The fee for depositing Bitcoin to ZetaChain.
   - `amount`: The amount to send.
-  - `memo`: Optional memo for the transaction.
-  - `fee`: Transaction fee.
 - **Implementation**:
+
 ```javascript
 const transactHash = await window.ethereum.request({
   method: 'wallet_snap',
@@ -195,22 +211,31 @@ const transactHash = await window.ethereum.request({
     snapId: defaultSnapOrigin,
     request: {
       method: 'transact-btc',
-      params: [amount,memo,fee]
+      params: [
+        customMemo,
+        depositFee,
+        recipientAddress,
+        ZRC20ContractAddress,
+        amount,
+      ],
     },
   },
 });
 ```
+
 - **Mock Successful Response**:
+
 ```JSON
     "3ca3fe3e8f7f0e69abdf50ab2942b3109f88468601fedd79ea57e3e8491025bd" // transaction hash
 ```
 
-
 ### 6. `track-cctx`
+
 - **Description**: Tracks a cross-chain transaction by its hash.
-- **Parameters**: 
+- **Parameters**:
   - `transactionHash`: The hash of the transaction to track.
 - **Implementation**:
+
 ```javascript
 const transactHash = await window.ethereum.request({
   method: 'wallet_snap',
@@ -218,12 +243,14 @@ const transactHash = await window.ethereum.request({
     snapId: defaultSnapOrigin,
     request: {
       method: 'transact-btc',
-      params: [transactionHash]
+      params: [transactionHash],
     },
   },
 });
 ```
+
 - **Mock Successful Response**:
+
 ```JSON
 {
   "CrossChainTx": {
@@ -275,5 +302,7 @@ const transactHash = await window.ethereum.request({
 ```
 
 ## Valid Origins
+
 The snap only accepts requests from the following origins:
+
 - `https://zetamask.com`
