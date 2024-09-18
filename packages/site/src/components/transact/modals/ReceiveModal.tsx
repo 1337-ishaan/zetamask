@@ -6,9 +6,9 @@ import { ReactComponent as ZetaChainIcon } from '../../../assets/zetachain.svg';
 import { useContext, useState } from 'react';
 import { StoreContext } from '../../../hooks/useStore';
 import QRCode from 'react-qr-code';
-import Typography from '../../../components/utils/Typography';
-import Copyable from '../../../components/utils/Copyable';
-import FlexColumnWrapper from '../../../components/utils/wrappers/FlexColumnWrapper';
+import Typography from '../../utils/Typography';
+import Copyable from '../../utils/Copyable';
+import FlexColumnWrapper from '../../utils/wrappers/FlexColumnWrapper';
 import FlexRowWrapper from '../../utils/wrappers/FlexRowWrapper';
 
 const ReceiveModalWrapper = styled.div`
@@ -43,9 +43,9 @@ const ReceiveModal = ({
   setIsReceiveModalOpen,
 }: ReceiveModalProps): JSX.Element => {
   const { globalState } = useContext(StoreContext);
-  const [selectedAddressType, setSelectedAddressType] = useState<'BTC' | 'EVM'>(
-    'BTC',
-  );
+  const [selectedAddressType, setSelectedAddressType] = useState<
+    'BTC' | 'ZETA'
+  >('BTC');
 
   const handleCloseModal = () => {
     setIsReceiveModalOpen(false);
@@ -73,40 +73,32 @@ const ReceiveModal = ({
               style={{
                 justifyContent: 'space-evenly',
                 alignItems: 'center',
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                paddingBottom: '12px',
               }}
               className="address-type-wrapper"
             >
-              <FlexColumnWrapper
-                onClick={() => setSelectedAddressType('EVM')}
-                style={{
-                  background: '#474747e4',
-                  borderRadius: '12px',
-                  padding: '8px 12px',
-                }}
-              >
+              <FlexColumnWrapper onClick={() => setSelectedAddressType('ZETA')}>
                 <Typography
                   className="type-button"
-                  color={selectedAddressType === 'EVM' ? '#fff' : '#a49f9f'}
-                  size={selectedAddressType === 'EVM' ? 24 : 22}
+                  color={selectedAddressType === 'ZETA' ? '#fff' : '#a49f9f'}
+                  size={16}
                 >
                   ZETA <ZetaChainIcon />
                 </Typography>
               </FlexColumnWrapper>
               <div
-                style={{ height: '24px', width: '.1px', background: '#fff' }}
-              />
-              <FlexColumnWrapper
-                onClick={() => setSelectedAddressType('BTC')}
                 style={{
-                  background: '#474747e4',
-                  borderRadius: '12px',
-                  padding: '8px 12px',
+                  height: '24px',
+                  width: '.1px',
+                  background: 'rgba(255,255,255,0.4)',
                 }}
-              >
+              />
+              <FlexColumnWrapper onClick={() => setSelectedAddressType('BTC')}>
                 <Typography
                   className="type-button"
                   color={selectedAddressType === 'BTC' ? '#fff' : '#a49f9f'}
-                  size={selectedAddressType === 'BTC' ? 24 : 22}
+                  size={16}
                 >
                   BTC <BitcoinIcon />
                 </Typography>

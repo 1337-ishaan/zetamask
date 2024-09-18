@@ -6,10 +6,6 @@ const ECPair = ECPairFactory(ecc);
 const CRYPTO_CURVE = 'secp256k1';
 const DERIVATION_PATH = ['m', "44'", "0'", "0'", '0', '0'];
 
-// network
-// const currNetwork = isMainnet
-//   ? bitcoin.networks.bitcoin
-//   : bitcoin.networks.testnet;
 
 // Zetachain addresses
 const MAINNET_ZETA_TSS ='bc1qm24wp577nk8aacckv8np465z3dvmu7ry45el6y';
@@ -32,6 +28,11 @@ const MAINNET_ZETA_BLOCKPI="https://zetachain.blockpi.network/lcd/v1";
 const TESTNET_ZETA_BLOCKSCOUT = 'https://zetachain-athens-3.blockscout.com/api/v2';
 const MAINNET_ZETA_BLOCKSCOUT = 'https://zetachain.blockscout.com/api/v2';
 
+const OMNICHAIN_SWAP_CONTRACT_ADDRESS =
+  '0x102Fa443F05200bB74aBA1c1F15f442DbEf32fFb';
+
+const ACTION_CODE = '01';
+
 
 export {
   ECPair,
@@ -48,5 +49,7 @@ export {
   TESTNET_ZETA_BLOCKPI,
   MAINNET_ZETA_BLOCKPI,
   TESTNET_ZETA_BLOCKSCOUT,
-  MAINNET_ZETA_BLOCKSCOUT
+  MAINNET_ZETA_BLOCKSCOUT,
+  OMNICHAIN_SWAP_CONTRACT_ADDRESS,
+  ACTION_CODE
 };

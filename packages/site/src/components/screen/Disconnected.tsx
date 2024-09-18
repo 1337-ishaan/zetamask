@@ -9,7 +9,7 @@ import React, { useContext } from 'react';
 const DisconnectedWrapper = styled(FlexRowWrapper)`
   width: 80vw;
   column-gap: 44px;
-  z-index:1;
+  z-index: 1;
   .supported-resources {
     width: 50%;
     row-gap: 40px;
@@ -18,13 +18,15 @@ const DisconnectedWrapper = styled(FlexRowWrapper)`
 
 interface DisconnectedProps {}
 
-
 const Disconnected = ({}: DisconnectedProps): JSX.Element => {
   const { globalState, setGlobalState } = useContext(StoreContext);
 
   React.useEffect(() => {
-    setGlobalState({...globalState, isMainnet: globalState?.isMainnet ?? false})
-  },[])
+    setGlobalState({
+      ...globalState,
+      isMainnet: globalState?.isMainnet ?? false,
+    });
+  }, []);
 
   return (
     <DisconnectedWrapper>

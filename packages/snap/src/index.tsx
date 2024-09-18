@@ -19,7 +19,7 @@ import {
  * @throws If the request method is not valid for this snap.
  */
 
-const validOrigins = ['http://localhost:8000','https://zetamask.com'];
+const validOrigins = ['http://localhost:8000', 'https://zetamask.com'];
 
 interface RpcRequest {
   method: string;
@@ -30,7 +30,7 @@ interface OnRpcRequestArgs {
   origin: string;
   request: RpcRequest;
 }
- 
+
 export const onRpcRequest: OnRpcRequestHandler = async ({
   origin,
   request,

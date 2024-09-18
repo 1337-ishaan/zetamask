@@ -1,4 +1,5 @@
 import styled from 'styled-components/macro';
+
 import Modal from 'react-modal';
 import Send from '../Send';
 import { ReactComponent as CrossIcon } from '../../../assets/cross.svg';

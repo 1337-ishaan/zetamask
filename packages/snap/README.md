@@ -16,6 +16,21 @@ From a user's perspective, the ZetaMask Snap offers several benefits that enhanc
 **Note:** If an error occurs, the return type is a string. It is recommended to use the try-catch-finally pattern for better error handling.
 
 
+### 0. `wallet_requestSnaps`
+- **Description**: Installs the ZetaMask Snap, which is the first step required to use the below mentioned API methods.
+- **Parameters**: None.
+- **Implementation**:
+```javascript
+const result = await window.ethereum.request({
+  method: 'wallet_requestSnaps',
+  params: { [snapId]: {} }, // default [snapId] params = {} 
+});
+```
+
+**Note:** If the user hasn't installed the MetaMask Snap, none of the API methods will function.
+
+
+
 ### 1. `derive-btc-wallet`
 - **Description**: Creates a Bitcoin wallet address based on the provided BIP32 public key.
 - **Parameters**: 

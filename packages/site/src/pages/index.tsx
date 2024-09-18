@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import Header from '../components/header/Header';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import TrxHistory from '../components/transaction-history/TrxHistory';
 import { defaultSnapOrigin } from '../config';
 import { MetaMaskContext } from '../hooks';
-import { isLocalSnap} from '../utils';
+import { isLocalSnap } from '../utils';
 import Transact from '../components/transact';
 import { ReactComponent as Logo } from '../assets/logo.svg';
 import Balances from '../components/balances/Balances';
@@ -16,10 +16,10 @@ import { StoreContext } from '../hooks/useStore';
 const AppWrapper = styled(FlexColumnWrapper)`
   padding: 16px 32px;
   margin: 0 auto;
-  height:fit-content;
+  height: fit-content;
 
   .action-balances-wrapper {
-      column-gap: 24px;
+    column-gap: 24px;
   }
 
   .page-bg-logo {
@@ -44,7 +44,7 @@ const Index = () => {
     ? state.isFlask
     : state.installedSnap;
 
-const isBtcAddressPresent = !!globalState?.btcAddress;
+  const isBtcAddressPresent = !!globalState?.btcAddress;
   return (
     <AppWrapper style={{ rowGap: isBtcAddressPresent ? 'unset' : '15vh' }}>
       <Logo className="page-bg-logo" />

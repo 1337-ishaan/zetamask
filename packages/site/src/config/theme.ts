@@ -179,4 +179,9 @@ export const GlobalStyle = createGlobalStyle`
       border: 1px solid ${(props) => props.theme.colors.background?.inverse};
     }
   }
+  .Toastify__close-button:hover,
+  .Toastify__close-button:focus {
+    border: none;
+    color:#fff;
+  }
 `;

@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode, useContext, useEffect } from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import { GlobalStyle } from './config/theme';
 import 'react-dropdown/style.css';
@@ -22,6 +22,7 @@ export const App = ({ children }: AppProps) => {
         position="top-center"
         transition={Slide}
         hideProgressBar
+        autoClose={false}
       />
       <GlobalStyle />
       <Wrapper>{children}</Wrapper>

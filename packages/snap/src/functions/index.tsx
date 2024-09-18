@@ -16,29 +16,33 @@ import {
   MAINNET_ZETA_BLOCKSCOUT,
   MAINNET_ZETA_TSS,
   TESTNET_ZETA_TSS,
+  OMNICHAIN_SWAP_CONTRACT_ADDRESS,
+  ACTION_CODE,
 } from '../constants';
 
-import { Box, Link, Heading } from '@metamask/snaps-sdk/jsx';
+import { Box, Link, Heading, Text } from '@metamask/snaps-sdk/jsx';
+import { sanitizeInput } from './utils/sanitizeInput';
+import { btcToSats } from './utils/satConverter';
 
 let isMainnet = false;
 /**
- * Converts an Ethereum address to a Zeta address and vice versa.
- * @param address - The Ethereum or Zeta address to convert.
- * @returns The converted address in Zeta format or Ethereum format.
+ * Converts an Ethereum btcAddress to a Zeta btcAddress and vice versa.
+ * @param btcAddress - The Ethereum or Zeta btcAddress to convert.
+ * @returns The converted btcAddress in Zeta format or Ethereum format.
  */
-const convertToZeta = (address: string): string => {
+const convertToZeta = (btcAddress: string): string => {
   try {
-    if (address.startsWith('0x')) {
-      const data = Buffer.from(trimHexPrefix(address), 'hex');
+    if (btcAddress.startsWith('0x')) {
+      const data = Buffer.from(trimHexPrefix(btcAddress), 'hex');
       return bech32.encode('zeta', bech32.toWords(data));
     } else {
-      const decoded = bech32.decode(address);
+      const decoded = bech32.decode(btcAddress);
       return (
         '0x' + Buffer.from(bech32.fromWords(decoded.words)).toString('hex')
       );
     }
   } catch (error) {
-    console.error('Error converting address to Zeta:', error);
+    console.error('Error converting btcAddress to Zeta:', error);
     throw new Error('Conversion to Zeta failed.');
   }
 };
@@ -53,8 +57,8 @@ export const trimHexPrefix = (key: string): string => {
 };
 
 /**
- * Creates a Bitcoin testnet address from the BIP32 public key.
- * @returns The generated Bitcoin testnet address.
+ * Creates a Bitcoin testnet btcAddress from the BIP32 public key.
+ * @returns The generated Bitcoin testnet btcAddress.
  */
 export const deriveBtcWallet = async (request: any): Promise<string> => {
   isMainnet = request.params[0]!;
@@ -70,19 +74,19 @@ export const deriveBtcWallet = async (request: any): Promise<string> => {
     });
 
     if (slip10Node) {
-      const { address } = bitcoin.payments.p2wpkh({
+      const { address: btcAddress } = bitcoin.payments.p2wpkh({
         pubkey: Buffer.from(trimHexPrefix(slip10Node), 'hex'),
         network: isMainnet
           ? bitcoin.networks.bitcoin
           : bitcoin.networks.testnet,
       });
-      return address as string;
+      return btcAddress as string;
     } else {
-      throw new Error('Failed to create Bitcoin testnet address.');
+      throw new Error('Failed to create Bitcoin testnet btcAddress.');
     }
   } catch (error) {
-    console.error('Error creating BTC testnet address:', error);
-    throw new Error('Failed to create Bitcoin testnet address.');
+    console.error('Error creating BTC testnet btcAddress:', error);
+    throw new Error('Failed to create Bitcoin testnet btcAddress.');
   }
 };
 
@@ -102,7 +106,7 @@ export const getBtcUtxo = async () => {
     });
 
     if (slip10Node) {
-      const { address } = bitcoin.payments.p2wpkh({
+      const { address: btcAddress } = bitcoin.payments.p2wpkh({
         pubkey: Buffer.from(trimHexPrefix(slip10Node), 'hex'),
         network: isMainnet
           ? bitcoin.networks.bitcoin
@@ -110,13 +114,13 @@ export const getBtcUtxo = async () => {
       });
 
       const utxo = await fetch(
-        `${isMainnet ? MAINNET_BLOCKCYPHER_API : TESTNET_BLOCKCYPHER_API}/addrs/${address}/full`,
+        `${isMainnet ? MAINNET_BLOCKCYPHER_API : TESTNET_BLOCKCYPHER_API}/addrs/${btcAddress}/full`,
       );
 
       const utxoData = await utxo.json();
       return utxoData ? utxoData : { txs: [] };
     } else {
-      throw new Error('Failed to create Bitcoin testnet address.');
+      throw new Error('Failed to create Bitcoin testnet btcAddress.');
     }
   } catch (error) {
     console.error('Error getting BTC UTXOs:', error);
@@ -125,8 +129,8 @@ export const getBtcUtxo = async () => {
 };
 
 /**
- * Retrieves current Bitcoin transaction fees.
- * @returns An object containing fee data.
+ * Retrieves current Bitcoin transaction depositFees.
+ * @returns An object containing depositFee data.
  */
 export const getFees = async () => {
   try {
@@ -134,13 +138,13 @@ export const getFees = async () => {
       `${isMainnet ? MAINNET_BLOCKCYPHER_API : TESTNET_BLOCKCYPHER_API}`,
     );
     if (!utxo.ok) {
-      throw new Error('Failed to fetch fees.');
+      throw new Error('Failed to fetch depositFees.');
     }
     const utxoData = await utxo.json();
-    return utxoData.high_fee_per_kb * 0.001 * 68 * 2;
+    return utxoData.high_fee_per_kb * 0.001 * 68 * 2; // zetachain's deposit fee = (high_fee_per_kb * 0.001)sat/vB * 68 sat/vB * 2
   } catch (error) {
-    console.error('Error getting fees:', error);
-    throw new Error('Failed to retrieve fees.');
+    console.error('Error getting depositFees:', error);
+    throw new Error('Failed to retrieve depositFees.');
   }
 };
 
@@ -216,19 +220,19 @@ export const getTrxByHash = async (previousTxHash: string) => {
     return stringData;
   } catch (error) {
     console.error('Error getting transaction by hash:', error);
-    throw new Error('Failed to retrieve transaction.')
+    throw new Error('Failed to retrieve transaction.');
   }
 };
 
 /**
- * Fetches unspent transaction outputs (UTXOs) for a specific Bitcoin address.
- * @param btcAddress - The Bitcoin address to check for UTXOs.
+ * Fetches unspent transaction outputs (UTXOs) for a specific Bitcoin btcAddress.
+ * @param btcAddress - The Bitcoin btcAddress to check for UTXOs.
  * @returns The UTXO data.
  */
 const fetchUtxo = async (btcAddress: string) => {
   try {
     const utxo = await fetch(
-      `${isMainnet ? MAINNET_BLOCKSTREAM_API : TESTNET_BLOCKSTREAM_API}/address/${btcAddress}/utxo`,
+      `${isMainnet ? MAINNET_BLOCKSTREAM_API : TESTNET_BLOCKSTREAM_API}/btcAddress/${btcAddress}/utxo`,
     );
     const utxoData = await utxo.json();
     return utxoData;
@@ -275,6 +279,24 @@ export const transactBtc = async (request: any) => {
   });
 
   if (result) {
+    // destructuring
+    const [
+      customMemo,
+      depositFeeRaw,
+      recipientAddress,
+      ZRC20ContractAddress,
+      transferAmountRaw,
+    ] = request.params;
+
+    const sanitizedRecipientAddress = sanitizeInput(recipientAddress);
+    const sanitizedZRC20ContractAddress = sanitizeInput(ZRC20ContractAddress);
+
+    const depositFee = Math.floor(depositFeeRaw) + 1; // sending 1 sat extra to cover depositFees
+    const transferAmount =
+      Math.floor(btcToSats(parseFloat(transferAmountRaw))) - 1; // subtracting 1 to account for depositFees
+
+    let generatedMemo;
+
     try {
       const slip10Node = await snap.request({
         method: 'snap_getBip32Entropy',
@@ -292,39 +314,78 @@ export const transactBtc = async (request: any) => {
         trimHexPrefix(slip10Node.privateKey),
         'hex',
       );
+
       const keypair = ECPair.fromPrivateKey(privateKeyBuffer);
-      const { address } = bitcoin.payments.p2wpkh({
+
+      const { address: btcAddress } = bitcoin.payments.p2wpkh({
         pubkey: keypair.publicKey,
         network: isMainnet
           ? bitcoin.networks.bitcoin
           : bitcoin.networks.testnet,
       });
 
-      if (!address) {
-        throw new Error('Failed to generate Bitcoin address');
+      try {
+        if (!sanitizedRecipientAddress || !btcAddress) {
+          throw new Error('ZETA or BTC Address undefined.');
+        }
+
+        let trimmedSanitizedRecipientAddress = trimHexPrefix(
+          sanitizedRecipientAddress,
+        );
+        let trimmedSanitizedZRC20ContractAddress = trimHexPrefix(
+          sanitizedZRC20ContractAddress,
+        );
+        let trimmedOmnichainContract = trimHexPrefix(
+          OMNICHAIN_SWAP_CONTRACT_ADDRESS,
+        );
+
+        if (!!ZRC20ContractAddress) {
+          generatedMemo = `${trimmedOmnichainContract}${ACTION_CODE}${trimmedSanitizedZRC20ContractAddress}${trimmedSanitizedRecipientAddress}`;
+        } else {
+          generatedMemo = trimmedSanitizedRecipientAddress;
+        }
+      } catch {
+        throw new Error('Error creating memo, please try again');
       }
 
-      const utxos = await fetchUtxo(address as string);
+      if (!btcAddress) {
+        throw new Error('Failed to generate Bitcoin Address');
+      }
+
+      const utxos = await fetchUtxo(btcAddress as string);
 
       if (!utxos || utxos.length === 0) {
         throw new Error('No UTXOs found');
       }
 
-      const amount = Math.floor(request.params[0]);
-      const fee = Math.floor(request.params[2]) + 1; // Send an extra sat to cover for the fee
+      const memoBuffer = Buffer.from(
+        customMemo && !!ZRC20ContractAddress ? customMemo : generatedMemo,
+        'hex',
+      );
+      await snap.request({
+        method: 'snap_dialog',
+        params: {
+          type: 'alert',
+          content: (
+            <Box>
+              <Heading>Memo Buffer: {JSON.stringify(memoBuffer)}</Heading>
+              <Text>Memo : {JSON.stringify(generatedMemo)}</Text>
+            </Box>
+          ),
+        },
+      });
 
-      const memo = Buffer.from(request.params[1], 'hex');
-
-      if (memo.length >= 78) throw new Error('Memo too long');
+      if (memoBuffer.length >= 78) throw new Error('Memo too long');
 
       utxos.sort(
         (a: { value: number }, b: { value: number }) => a.value - b.value,
       );
-      if (typeof fee !== 'number') {
-        throw new Error('Invalid fee');
+
+      if (typeof depositFee !== 'number') {
+        throw new Error('Invalid deposit fee type');
       }
 
-      const total = amount + fee;
+      const total = transferAmount + depositFee;
       let sum = 0;
       const pickUtxos = [];
 
@@ -335,6 +396,7 @@ export const transactBtc = async (request: any) => {
       }
 
       if (sum < total) throw new Error('Not enough funds');
+
       const change = sum - total;
       const txs = [];
 
@@ -346,11 +408,11 @@ export const transactBtc = async (request: any) => {
         if (!p1.ok) {
           throw new Error(`Failed to fetch transaction data for ${utxo.txid}`);
         }
+
         const data = await p1.json();
         txs.push(data);
       }
 
-      //
       const psbt = new bitcoin.Psbt({
         network: isMainnet
           ? bitcoin.networks.bitcoin
@@ -358,17 +420,19 @@ export const transactBtc = async (request: any) => {
       });
       psbt.addOutput({
         address: isMainnet ? MAINNET_ZETA_TSS : TESTNET_ZETA_TSS,
-        value: amount,
+        value: transferAmount,
       });
 
-      if (memo.length > 0) {
-        const embed = bitcoin.payments.embed({ data: [memo] });
+      if (memoBuffer.length > 0) {
+        const embed = bitcoin.payments.embed({
+          data: [memoBuffer],
+        });
         if (!embed.output) throw new Error('Unable to embed memo');
         psbt.addOutput({ script: embed.output, value: 0 });
       }
 
       if (change > 0) {
-        psbt.addOutput({ address: address, value: change });
+        psbt.addOutput({ address: btcAddress, value: change });
       }
 
       for (let i = 0; i < pickUtxos.length; i++) {
@@ -416,7 +480,7 @@ export const transactBtc = async (request: any) => {
       throw new Error(`Cross-chain swap failed. ${error}`);
     }
   } else {
-    throw new Error('User Rejected')
+    throw new Error('User Rejected');
   }
 };
 
@@ -446,16 +510,16 @@ export const trackCctxTx = async (request: any) => {
 };
 
 /**
- * Retrieves the balance for a given address and exchange_rate.
- * @param request - The request object containing the address.
+ * Retrieves the balance for a given btcAddress and exchange_rate.
+ * @param request - The request object containing the btcAddress.
  * @returns An object containing Zeta, non-Zeta balances and prices.
  */
 export const getBalanceAndRate = async (request: any) => {
   try {
     if (request.params[0]) {
-      const address = convertToZeta(request.params[0]);
+      const btcAddress = convertToZeta(request.params[0]);
       const zeta = await fetch(
-        `${isMainnet ? MAINNET_ZETA_BLOCKPI : TESTNET_ZETA_BLOCKPI}/public/cosmos/bank/v1beta1/spendable_balances/${address}`,
+        `${isMainnet ? MAINNET_ZETA_BLOCKPI : TESTNET_ZETA_BLOCKPI}/public/cosmos/bank/v1beta1/spendable_balances/${btcAddress}`,
       );
       const nonZeta = await fetch(
         `${isMainnet ? MAINNET_ZETA_BLOCKSCOUT : TESTNET_ZETA_BLOCKSCOUT}/addresses/${request.params[0]}/token-balances`,
@@ -484,7 +548,7 @@ export const getBalanceAndRate = async (request: any) => {
         btcPrice,
       };
     } else {
-      throw new Error('Address parameter is missing.');
+      throw new Error('btcAddress parameter is missing.');
     }
   } catch (error) {
     console.error('Error getting Zeta balance:', error);

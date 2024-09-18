@@ -11,19 +11,19 @@ import FlexColumnWrapper from '../utils/wrappers/FlexColumnWrapper';
 import BalancePie from './charts/BalancePie';
 import BigNumber from 'bignumber.js';
 import EmptyBalance from './EmptyBalance';
+import { satsToBtc } from '../../utils/satConverter';
 interface BalanceData {
   label: string;
   value: number;
-  usdPrice?:number | null;
-  icon_url?: string | null  
-
+  usdPrice?: number | null;
+  icon_url?: string | null;
 }
 
 interface NonZetaToken {
   token: {
     symbol: string;
-    exchange_rate:number | null;
-    icon_url: string | null  
+    exchange_rate: number | null;
+    icon_url: string | null;
   };
   value: number;
 }
@@ -38,9 +38,8 @@ interface ZetaBalanceResponse {
   zeta: {
     balances: ZetaBalance[];
   };
-  zetaPrice: number
-  btcPrice: number
-
+  zetaPrice: number;
+  btcPrice: number;
 }
 
 const BalancesWrapper = styled(FlexColumnWrapper)`
@@ -69,7 +68,6 @@ const BalancesWrapper = styled(FlexColumnWrapper)`
   }
 
   table {
-
     border: 3px solid #ddd;
     border-collapse: collapse;
 
@@ -91,10 +89,9 @@ const BalancesWrapper = styled(FlexColumnWrapper)`
     color: #eee;
     margin-top: 16px;
   }
-  .balance-pie-container{
-    width:100%;
-    height:100%;
-    justify-content: space-around;
+  .balance-pie-container {
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -105,29 +102,37 @@ const Balances = ({}: BalancesProps): JSX.Element => {
   const [data, setData] = useState<BalanceData[]>([]);
   const [searched, setSearched] = useState<BalanceData[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const isMainnet = globalState.isMainnet
+  const isMainnet = globalState.isMainnet;
 
   useEffect(() => {
-    if (globalState?.evmAddress &&  typeof globalState?.utxo === 'number' && isMainnet=== globalState.isMainnet) {
+    if (
+      globalState?.evmAddress &&
+      typeof globalState?.utxo === 'number' &&
+      isMainnet === globalState.isMainnet
+    ) {
       const fetchBalances = async () => {
         try {
           const result = (await getBalanceAndRate(
             globalState.evmAddress as string,
           )) as ZetaBalanceResponse;
-          console.log(result,'result balance');
+          console.log(result, 'result balance');
 
           const maps: BalanceData[] = result?.nonZeta?.map((t) => ({
             label: t.token.symbol,
-            usdPrice: (new BigNumber(t?.value)
-            .dividedBy(t?.token?.symbol === 'tBTC' ? 1e8 : 1e18)
-            .toNumber()) * +t.token.exchange_rate! ?? 0,
-            icon_url: t.token.icon_url ?? "",
+            usdPrice:
+              new BigNumber(t?.value)
+                .dividedBy(t?.token?.symbol === 'tBTC' ? 1e8 : 1e18)
+                .toNumber() * +t.token.exchange_rate! ?? 0,
+            icon_url: t.token.icon_url ?? '',
             value: new BigNumber(t?.value)
               .dividedBy(t?.token?.symbol === 'tBTC' ? 1e8 : 1e18)
               .toNumber(),
           }));
 
-          if (result.zeta.balances.length === 0 && result.nonZeta.length === 0) {
+          if (
+            result.zeta.balances.length === 0 &&
+            result.nonZeta.length === 0
+          ) {
             setData([
               {
                 label: 'BTC',
@@ -139,20 +144,21 @@ const Balances = ({}: BalancesProps): JSX.Element => {
               },
             ]);
           } else {
-          setData([
-            {
-              label: 'BTC',
-              value: globalState.utxo / 1e8,
-              usdPrice: (globalState.utxo / 1e8) * result.btcPrice
-            },
-            ...maps,
-            {
-              label: result.zeta.balances[0]?.denom!,
-              value: result.zeta.balances[0]?.amount! / 1e18,
-              usdPrice: (result.zeta.balances[0]?.amount! / 1e18) * result.zetaPrice
-            },
-          ]);
-        }
+            setData([
+              {
+                label: 'BTC',
+                value: satsToBtc(globalState.utxo),
+                usdPrice: satsToBtc(globalState.utxo) * result.btcPrice,
+              },
+              ...maps,
+              {
+                label: result.zeta.balances[0]?.denom!,
+                value: result.zeta.balances[0]?.amount! / 1e18,
+                usdPrice:
+                  (result.zeta.balances[0]?.amount! / 1e18) * result.zetaPrice,
+              },
+            ]);
+          }
           setError(null);
         } catch (err) {
           setError('Failed to fetch balance data. Please try again later.');
@@ -163,7 +169,7 @@ const Balances = ({}: BalancesProps): JSX.Element => {
     }
   }, [globalState?.evmAddress, globalState?.utxo]);
 
-  console.log(data,'data');
+  console.log(data, 'data');
 
   const handleSearch = (text: string) => {
     const searchText = DOMPurify.sanitize(text);
@@ -186,11 +192,16 @@ const Balances = ({}: BalancesProps): JSX.Element => {
             <Typography size={14} weight={500}>
               All assets on the ZetaChain Network and <br />
               Bitcoin Network (BTC) are displayed here ↓
+              <br />
+              <br />
+              {!globalState.isMainnet
+                ? 'TESTNET: The pie-chart displays native BTC & ZETA'
+                : ''}
             </Typography>
           }
         />
       </Typography>
-      
+
       <div className="input-container">
         <input
           placeholder="Search Asset"
@@ -199,50 +210,68 @@ const Balances = ({}: BalancesProps): JSX.Element => {
         />
       </div>
 
-      {error && <div className="error-message">"Error loading balances, {error + ''}</div>}
-
-
-      <FlexColumnWrapper className='balance-pie-container'>
-
-      {data.length >= 2 && data[0]!.value + data[1]!.value > 0 ? (
-        <BalancePie data={data} />
-      ) : (
-        <EmptyBalance />
+      {error && (
+        <div className="error-message">
+          "Error loading balances, {error + ''}
+        </div>
       )}
 
-      <table>
-        <thead>
-          <tr>
-            <th>Asset</th>
-            <th>Amount</th>
-            <th>Amount ($)</th>
-          </tr>
-        </thead>
-        <tbody>
+      <FlexColumnWrapper className="balance-pie-container">
+        {data.length >= 2 && data[0]!.value + data[1]!.value > 0 ? (
+          <BalancePie data={data} />
+        ) : (
+          <EmptyBalance />
+        )}
 
-          {(searched.length > 0 ? searched : data).map((item, index) => (
-            <tr key={index}>
-              <td>
-                <Typography size={14}>
-                  {item.label === 'BTC' ? (
-                    <BtcIcon className="chain-icon" />
-                  ) : (
-                    <ZetaIcon className="chain-icon" />
-                  )}
-                  {item.label}
-                </Typography>
-              </td>
-              <td>
-                <Typography size={14}>
-                  {parseFloat(item.value.toString()).toLocaleString(undefined, {minimumSignificantDigits: 1, maximumSignificantDigits: 8})} {item.label}
-                </Typography>
-              </td>
-              <td>{!globalState.isMainnet ? 0 : parseFloat(item.usdPrice!.toString()).toLocaleString(undefined, {minimumSignificantDigits: 1, maximumSignificantDigits: 8})}</td>
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Amount</th>
+              <th>Amount ($)</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </FlexColumnWrapper>
+          </thead>
+          <tbody>
+            {(searched.length > 0 ? searched : data).map((item, index) => (
+              <tr key={index}>
+                <td>
+                  <Typography size={14}>
+                    {item.label === 'BTC' ? (
+                      <BtcIcon className="chain-icon" />
+                    ) : (
+                      <ZetaIcon className="chain-icon" />
+                    )}
+                    {item.label}
+                  </Typography>
+                </td>
+                <td>
+                  <Typography size={14}>
+                    {parseFloat(item.value.toString()).toLocaleString(
+                      undefined,
+                      {
+                        minimumSignificantDigits: 1,
+                        maximumSignificantDigits: 8,
+                      },
+                    )}{' '}
+                    {item.label}
+                  </Typography>
+                </td>
+                <td>
+                  {!globalState.isMainnet
+                    ? 0
+                    : parseFloat(item.usdPrice!.toString()).toLocaleString(
+                        undefined,
+                        {
+                          minimumSignificantDigits: 1,
+                          maximumSignificantDigits: 8,
+                        },
+                      )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </FlexColumnWrapper>
     </BalancesWrapper>
   );
 };

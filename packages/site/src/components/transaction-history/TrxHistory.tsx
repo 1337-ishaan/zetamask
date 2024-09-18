@@ -9,25 +9,30 @@ import FlexRowWrapper from '../utils/wrappers/FlexRowWrapper';
 import TooltipInfo from '../utils/TooltipInfo';
 import { StoreContext } from '../../hooks/useStore';
 import Arrow from '../utils/Arrow';
+import FlexColumnWrapper from '../utils/wrappers/FlexColumnWrapper';
 
 const TrxHistoryWrapper = styled.div`
   background: ${(props) => props.theme.colors.dark?.default};
   box-shadow: 0px 0px 21px 5px rgba(0, 0, 0, 1);
   color: #dadada;
   padding: 24px;
-  transition:all .4s;
+  transition: all 0.4s;
 
   overflow-x: hidden;
   border-radius: ${(props) => props.theme.borderRadius};
   height: 360px;
-  width:auto;
-  overflow-y: auto;
-  scrollbar-width: none; /* For Firefox */
-  -ms-overflow-style: none; /* For Internet Explorer and Edge */
   &::-webkit-scrollbar {
     display: none; /* For Chrome, Safari, and Opera */
   }
-
+  .trx-row-wrapper {
+    width: auto;
+    overflow-y: auto;
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    &::-webkit-scrollbar {
+      display: none; /* For Chrome, Safari, and Opera */
+    }
+  }
   .no-transactions {
     display: flex;
     height: 350px;
@@ -72,6 +77,14 @@ const TrxHistoryWrapper = styled.div`
       }
     }
   }
+  .sticky {
+    position: sticky;
+    padding: 0px 4px;
+    top: 0;
+    width: auto;
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+  }
 `;
 
 const TrxHistory: React.FC = () => {
@@ -85,13 +98,12 @@ const TrxHistory: React.FC = () => {
         !globalState?.btcTrxs &&
         !globalState?.utxo) ||
       isRefetched ||
-      globalState.isTrxProcessed 
+      globalState.isTrxProcessed
     ) {
-
       const getBtcTrx = async () => {
         try {
           const results: any = await getBtcUtxo();
-          console.log(results,'utxo results');
+          console.log(results, 'utxo results');
           setGlobalState({
             ...globalState,
             btcTrxs: results,
@@ -114,7 +126,6 @@ const TrxHistory: React.FC = () => {
     setGlobalState,
   ]);
 
-
   const getAmount = (trx: any) => {
     return trx.outputs.filter(
       (t: any) => t.addresses?.[0] === globalState?.btcAddress,
@@ -123,7 +134,7 @@ const TrxHistory: React.FC = () => {
 
   return (
     <TrxHistoryWrapper>
-      <FlexRowWrapper className="flex-row">
+      <FlexRowWrapper className="sticky flex-row">
         <Typography>
           Transactions
           <TooltipInfo>
@@ -162,10 +173,8 @@ const TrxHistory: React.FC = () => {
         </div>
       )}
       {isRefetched ? (
-
         <Loader />
       ) : (
-        
         globalState?.btcTrxs?.txs?.map((trx: any, index: number) => {
           const isSent = trx.inputs[0].addresses?.includes(
             globalState?.btcAddress,
@@ -176,12 +185,14 @@ const TrxHistory: React.FC = () => {
 
           return (
             shouldRender && (
-              <TrxRow
-                key={index}
-                trx={trx}
-                isSent={isSent}
-                amount={getAmount(trx)}
-              />
+              <FlexColumnWrapper className="trx-row-wrapper">
+                <TrxRow
+                  key={index}
+                  trx={trx}
+                  isSent={isSent}
+                  amount={getAmount(trx)}
+                />
+              </FlexColumnWrapper>
             )
           );
         })

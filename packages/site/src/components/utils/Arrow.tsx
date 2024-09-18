@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import { ReactComponent as ArrowIcon } from '../../assets/arrow.svg';
 
 const ArrowWrapper = styled(ArrowIcon)<{ isReceived: boolean }>`
@@ -7,6 +7,7 @@ const ArrowWrapper = styled(ArrowIcon)<{ isReceived: boolean }>`
   padding: 4px;
   border-radius: 12px;
   width: 28px;
+  z-index: -1;
   color: ${(props) => (props.isReceived ? '#008462' : '#ff4a3d')};
 `;
 

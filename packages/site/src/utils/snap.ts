@@ -1,8 +1,7 @@
 import type { MetaMaskInpageProvider } from '@metamask/providers';
 import { defaultSnapOrigin } from '../config';
 import type { GetSnapsResponse, Snap } from '../types';
-import { OMNICHAIN_SWAP_CONTRACT_ADDRESS } from '../constants/contracts';
-import { sanitizeInput } from './sanitizeInput';
+
 
 
 
@@ -31,13 +30,14 @@ export const connectSnap = async (
   snapId: string = defaultSnapOrigin,
   params: Record<'version' | string, unknown> = {},
 ) => {
-
+console.log('SNAPCALL --> connectSnap');
   try {
     await window.ethereum.request({
       method: 'wallet_requestSnaps',
       params: { [snapId]: params },
     });
   } catch (error) {
+    console.log('SNAPCALL --> connectSnap error', error);
     throw error;
   }
 };
@@ -113,45 +113,14 @@ export const getBtcUtxo = async () => {
 };
 
 
-export const transferBtc = async (
-  recipentAddress: string,
-  zrc20: string,
+export const transactBtc = async (
+  recipientAddress: string,
+  ZRC20ContractAddress: string,
   amount: number,
-  address: string,
   customMemo: string,
-  fee: number,
+  depositFee: number,
 ) => {
-  console.log(recipentAddress, zrc20, amount, address, customMemo, 'SNAPCALL --> transferBtc');
-
-  try {
-    let action = '01';
-    let addressToSend;
-    if (!recipentAddress && !address) {
-      console.error('EVM address undefined.');
-      return;
-    }
-
-    addressToSend = !!recipentAddress ? recipentAddress : address;
-
-    const decAmount = parseFloat('' + amount) * 1e8;
-    // const bitcoinTSSAddress = 'tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur';
-    console.log(decAmount, 'decAmount');
-    let memo;
-
-    const dest = addressToSend.replace(/^0x/, '');
-
-    if (!!zrc20) {
-      const contract = OMNICHAIN_SWAP_CONTRACT_ADDRESS.replace(
-        /^0x/,
-        '',
-      );
-      const zrc = sanitizeInput(zrc20).replace(/^0x/, '');
-      memo = `${contract}${action}${zrc}${dest}`;
-    } else {
-      memo = sanitizeInput(dest);
-    }
-
-    console.log(decAmount, memo, fee, 'SNAPCALL --> transferBtc');
+  try{
     const result = await window.ethereum.request({
       method: 'wallet_snap',
       params: {
@@ -159,20 +128,22 @@ export const transferBtc = async (
         request: {
           method: 'transact-btc',
           params: [
-            decAmount,
-            customMemo.length > 0 ? customMemo : memo,
-            fee, 
+            customMemo,
+            depositFee,
+            recipientAddress,
+            ZRC20ContractAddress,
+            amount,
           ],
-        },
-      },
-    });
-    return result;
+        }
+     }    
+   });
+   return result;
   } catch (error) {
     throw error;
   }
 };
 
-export const trackCctx = async (trxHash: string) => {
+export const trackCctx = async (trxHash:string) => {
 
   try {
     const result = await window.ethereum.request({

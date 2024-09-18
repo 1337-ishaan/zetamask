@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import Arrow from '../utils/Arrow';
 import TooltipInfo from '../utils/TooltipInfo';
 import Typography from '../utils/Typography';
@@ -15,7 +15,7 @@ const TransactWrapper = styled(FlexColumnWrapper)`
   color: #dadada;
   padding: 24px;
   overflow-y: auto;
-width:auto;
+  width: auto;
   border-radius: ${(props) => props.theme.borderRadius};
   .actions-wrapper {
     column-gap: 24px;

@@ -3,7 +3,7 @@ import StyledInput from '../utils/StyledInput';
 import Typography from '../utils/Typography';
 import { useContext, useEffect, useState } from 'react';
 import StyledButton from '../utils/StyledButton';
-import { getBtcFees, transferBtc } from '../../utils/snap';
+import { getBtcFees, transactBtc } from '../../utils/snap';
 import Select from 'react-dropdown-select';
 import axios from 'axios';
 import { getChainIcon } from '../../constants/getChainIcon';
@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import TooltipInfo from '../utils/TooltipInfo';
 import { StoreContext } from '../../hooks/useStore';
 import { ZETA_BLOCKPI_API_URL } from '../../constants/api';
+import { satsToBtc } from '../../utils/satConverter';
 
 const SendWrapper = styled.div`
   display: flex;
@@ -125,12 +126,11 @@ interface SendProps {
 }
 
 const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
-  const [trxInput, setTrxInput] = useState<any>({});
   const [currentActive, setCurrentActive] = useState('zeta');
-  const [zrc20Assets, setZrc20Assets] = useState<any>();
-  const [selectedZrc20, setSelectedZrc20] = useState<any>('');
+  const [ZRC20Assets, setZRC20Assets] = useState<any>();
+  const [selectedZRC20, setSelectedZRC20] = useState<any>('');
   const [amount, setAmount] = useState<any>(0);
-  const [recipentAddress, setRecipentAddress] = useState<any>('');
+  const [recipientAddress, setRecipientAddress] = useState<any>('');
   const [isTrxProcessing, setIsTrxProcessing] = useState(false);
   const [customMemo, setCustomMemo] = useState('');
   const [depositFees, setDepositFees] = useState<any>();
@@ -142,11 +142,10 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
       hideProgressBar: false,
     });
     try {
-      await transferBtc(
-        recipentAddress ? recipentAddress : globalState?.evmAddress,
-        selectedZrc20.zrc20_contract_address,
+      await transactBtc(
+        recipientAddress ? recipientAddress : globalState?.evmAddress,
+        selectedZRC20.zrc20_contract_address,
         +amount,
-        globalState?.evmAddress as string,
         customMemo,
         depositFees,
       );
@@ -164,7 +163,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
       // TODO: make API_URL as constant
       `${ZETA_BLOCKPI_API_URL}/zeta-chain/fungible/foreign_coins`,
     );
-    setZrc20Assets(assets.data.foreignCoins);
+    setZRC20Assets(assets.data.foreignCoins);
     return assets;
   };
 
@@ -177,13 +176,14 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
       const getFees = async () => {
         let fees = await getBtcFees();
         //@ts-ignore next line
-        setDepositFees(fees)
+        setDepositFees(fees);
       };
       getFees();
       return () => {};
     }
   }, []);
-  console.log(depositFees,'deposit fees');
+
+  console.log(depositFees, 'deposit fees');
   const CustomItemRenderer = ({ option }: any) => (
     <div className="dropdown-item">
       <div className="icon-symbol-wrapper">
@@ -198,8 +198,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
     </div>
   );
 
-  const maxFunds =
-    Math.floor((globalState?.utxo - depositFees) / 1e8 * 1e8) / 1e8;
+  const maxFunds = satsToBtc(globalState?.utxo ?? 0 - depositFees);
 
   return (
     <SendWrapper>
@@ -219,10 +218,12 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
       </FlexRowWrapper>
       {currentActive === 'cctx' && (
         <Select
-          options={zrc20Assets}
-          contentRenderer={() => (
-            <div key={trxInput.key}>
-                <CustomItemRenderer option={selectedZrc20} />
+          searchable={true}
+          searchBy="symbol"
+          options={ZRC20Assets}
+          contentRenderer={(index) => (
+            <div key={+index}>
+              <CustomItemRenderer option={selectedZRC20} />
             </div>
           )}
           valueField="symbol"
@@ -231,8 +232,8 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
               <CustomItemRenderer option={item} />
             </div>
           )}
-          values={zrc20Assets[1]?.symbol}
-          onChange={(e) => setSelectedZrc20(e[0])}
+          values={ZRC20Assets[1]?.symbol}
+          onChange={(e) => setSelectedZRC20(e[0])}
           placeholder="Select an option"
         />
       )}
@@ -241,7 +242,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
         <StyledInput
           placeholder="Recipent Address (Optional)"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setRecipentAddress(e.target.value)
+            setRecipientAddress(e.target.value)
           }
         />
         <StyledInput
@@ -257,7 +258,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
           className={`max-utxo ${maxFunds < 0 ? ' red' : ''}`}
           onClick={() => setAmount(maxFunds)}
         >
-          Max:{maxFunds} BTC
+          Max: {isNaN(maxFunds) ? 0 : maxFunds} BTC
         </FlexRowWrapper>
         {currentActive === 'cctx' ? (
           <FlexRowWrapper className="custom-tooltip-wrapper">
@@ -349,13 +350,14 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
       <FlexRowWrapper className="gas-wrapper">
         <GasIcon className="icon" /> Fees :
         <span className="amount">
-          ~{(depositFees / 1e8)} BTC
+          ~{isNaN(satsToBtc(depositFees)) ? 0 : satsToBtc(depositFees)} BTC
         </span>
       </FlexRowWrapper>
       <StyledButton
         disabled={
-          (currentActive === 'zeta' ? !amount : !amount || !selectedZrc20) 
-          || maxFunds < 0
+          false
+          // currentActive === 'zeta' ? !amount : !amount || !selectedZRC20
+          // || maxFunds < 0
         }
         onClick={sendTrx}
       >

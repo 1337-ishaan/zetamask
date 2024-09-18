@@ -6,8 +6,6 @@ const ToggleWrapper = styled.div`
   background-color: #2c2c2c;
   border-radius: 20px;
   width: fit-content;
-
- 
 `;
 
 const ToggleOption = styled.button<{ isActive: boolean }>`
@@ -21,8 +19,8 @@ const ToggleOption = styled.button<{ isActive: boolean }>`
   transition: all 0.3s ease;
 
   &:hover {
-    outline:none;
-    border:none;
+    outline: none;
+    border: none;
 
     background-color: ${(props) => (props.isActive ? '#bfbfbf' : '#4a4a4a')};
     color: ${(props) => (props.isActive ? '#fff' : '#ffffff')};
@@ -34,7 +32,7 @@ interface ToggleProps {
   onToggle: (option: boolean) => void;
 }
 
-const Toggle: React.FC<ToggleProps> = ({ isMainnet=false, onToggle }) => {
+const Toggle: React.FC<ToggleProps> = ({ isMainnet = false, onToggle }) => {
   return (
     <ToggleWrapper>
       <ToggleOption

@@ -34,13 +34,25 @@ interface SocialLinksProps {}
 const SocialLinks = ({}: SocialLinksProps): JSX.Element => {
   return (
     <SocialLinksWrapper>
-      <a className="social" rel="noopener noreferrer" href="https://www.youtube.com/@ZetaMask">
+      <a
+        className="social"
+        rel="noopener noreferrer"
+        href="https://www.youtube.com/@ZetaMask"
+      >
         <YoutubeLogo className="social-logo" />
       </a>
-      <a className="social" rel="noopener noreferrer" href="https://x.com/zetamask">
+      <a
+        className="social"
+        rel="noopener noreferrer"
+        href="https://x.com/zetamask"
+      >
         <XLogo className="social-logo" />
       </a>
-      <a className="social" rel="noopener noreferrer" href="https://t.me/zetamask">
+      <a
+        className="social"
+        rel="noopener noreferrer"
+        href="https://t.me/zetamask"
+      >
         <TelegramLogo className="social-logo" />
       </a>
       <a

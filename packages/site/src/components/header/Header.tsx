@@ -1,6 +1,6 @@
+import styled from 'styled-components/macro';
 import { useContext, useEffect, useState } from 'react';
 import { StoreContext } from '../../hooks/useStore';
-import styled from 'styled-components/macro';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { ReactComponent as DisconnectIcon } from '../../assets/disconnect.svg';
 
@@ -18,13 +18,14 @@ import Copyable from '../utils/Copyable';
 import { ReactComponent as BitcoinLogo } from '../../assets/bitcoin.svg';
 import { ReactComponent as ZetaLogo } from '../../assets/zetachain.svg';
 import Toggle from '../utils/Toggle';
+import Typography from '../utils/Typography';
 
 const HeaderWrapper = styled(FlexRowWrapper)`
   justify-content: space-between;
   padding: 32px 0;
   .logo {
-    height: 40px;
-    width: 40px;
+    height: 48px;
+    width: 48px;
   }
   .address-header {
     align-items: center;
@@ -69,6 +70,21 @@ const HeaderWrapper = styled(FlexRowWrapper)`
     .header-section-disconnected{
         column-gap:16px;
     }
+
+    .logo-wrapper{
+    position:relative;
+
+    .t-current-network{
+      position:absolute;
+      top:6px;
+      right:-40px;
+      background-color: rgba(255,255,0,1);
+      border:1px solid #000;
+      border-radius: 20px;
+      padding:2px 4px ;
+      color:#000;
+     }
+    }
   `;
 
 interface HeaderProps {}
@@ -76,7 +92,7 @@ interface HeaderProps {}
 const Header = ({}: HeaderProps): JSX.Element => {
   const [state] = useContext(MetaMaskContext);
   const { globalState, setGlobalState } = useContext(StoreContext);
-  const [isSnapInstalled,setIsSnapInstalled] = useState(false);
+  const [isSnapInstalled, setIsSnapInstalled] = useState(false);
 
   useEffect(() => {
     // Save the global state to localStorage when it changes
@@ -93,15 +109,15 @@ const Header = ({}: HeaderProps): JSX.Element => {
   };
 
   // Connect to the Zeta snap
-  const onConnectSnap = async (isMainnet:boolean) => {
+  const onConnectSnap = async (isMainnet: boolean) => {
     console.log('Connecting to Zeta snap');
     try {
       await connectSnap();
       setIsSnapInstalled(true);
 
-      if(typeof isMainnet !== 'undefined'){
+      if (typeof isMainnet !== 'undefined') {
         const evmAddress = await getEvmAddress();
-        const btcAddress = await createBtcWallet(isMainnet); 
+        const btcAddress = await createBtcWallet(isMainnet);
         if (evmAddress && btcAddress) {
           setGlobalState({ ...globalState, btcAddress, evmAddress });
         }
@@ -112,7 +128,6 @@ const Header = ({}: HeaderProps): JSX.Element => {
     }
   };
 
-  console.log(isSnapInstalled,'is snap installed');
   // Disconnect from the Zeta snap
   const onDisconnectSnap = async () => {
     try {
@@ -126,20 +141,29 @@ const Header = ({}: HeaderProps): JSX.Element => {
 
   return (
     <HeaderWrapper>
-      <Logo className="logo" />
+      <div className="logo-wrapper">
+        <Logo className="logo" />
+        <Typography size={9} weight={800} className="t-current-network">
+          {globalState?.isMainnet ? 'mainnet' : 'testnet'}
+        </Typography>
+      </div>
       <div className="connect-wallet-wrapper">
-        {(state.installedSnap || isSnapInstalled) ? (
-          <FlexRowWrapper >
+        {state.installedSnap || isSnapInstalled ? (
+          <FlexRowWrapper>
             {!globalState?.btcAddress ? (
               <FlexRowWrapper className="header-section-disconnected">
-              <Toggle
-                isMainnet={globalState?.isMainnet}
-                onToggle={(option) => setGlobalState({ ...globalState, isMainnet: option })}
+                <Toggle
+                  isMainnet={globalState?.isMainnet}
+                  onToggle={(option) =>
+                    setGlobalState({ ...globalState, isMainnet: option })
+                  }
                 />
-              <StyledButton onClick={() => onConnectSnap(globalState?.isMainnet)}> 
-                Connect ZetaMask
-              </StyledButton>
-                </FlexRowWrapper>
+                <StyledButton
+                  onClick={() => onConnectSnap(globalState?.isMainnet)}
+                >
+                  Connect ZetaMask
+                </StyledButton>
+              </FlexRowWrapper>
             ) : (
               <FlexRowWrapper className="address-header">
                 <div className="icon-addr-wrapper">
@@ -151,9 +175,12 @@ const Header = ({}: HeaderProps): JSX.Element => {
                   <ZetaLogo className="chain-icon" />
                   <Copyable>{globalState?.evmAddress}</Copyable>
                 </div>
-              
-                <StyledButton className="disconnect-btn-wrapper" onClick={onDisconnectSnap}>
-                  <DisconnectIcon className="disconnect-icon"/>
+
+                <StyledButton
+                  className="disconnect-btn-wrapper"
+                  onClick={onDisconnectSnap}
+                >
+                  <DisconnectIcon className="disconnect-icon" />
                 </StyledButton>
               </FlexRowWrapper>
             )}
