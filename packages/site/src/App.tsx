@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useContext, useEffect } from 'react';
+import { ReactNode } from 'react';
 import styled from 'styled-components/macro';
 
 import { GlobalStyle } from './config/theme';

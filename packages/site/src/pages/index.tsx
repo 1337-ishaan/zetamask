@@ -22,14 +22,22 @@ const AppWrapper = styled(FlexColumnWrapper)`
   .action-balances-wrapper {
     column-gap: 24px;
   }
-
-  .page-bg-logo {
-    position: absolute;
-    width: 630px;
-    top: 0;
-    left: 0;
-    opacity: 0.1;
-    z-index: -1;
+  @keyframes animateDropShadow {
+    0% { filter: drop-shadow(0 0 160px #676767); }
+    50% { filter: drop-shadow(0 0 0px #676767); }
+    100% { filter: drop-shadow(0 0 160px #676767); }
+  }
+    .page-bg-logo {
+      position: absolute;
+      width: 720px;
+      top: 0;
+      left: 0;
+      opacity: 0.1;
+      z-index: 1;
+      
+      animation: animateDropShadow 3s infinite;
+   
+    }
   }
 
   .trx-transact-wrapper {
