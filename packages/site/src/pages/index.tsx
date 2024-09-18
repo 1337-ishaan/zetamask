@@ -12,6 +12,7 @@ import FlexColumnWrapper from '../components/utils/wrappers/FlexColumnWrapper';
 import Disconnected from '../components/screen/Disconnected';
 import FlexRowWrapper from '../components/utils/wrappers/FlexRowWrapper';
 import { StoreContext } from '../hooks/useStore';
+import SocialLinks from '../components/utils/SocialLinks';
 
 const AppWrapper = styled(FlexColumnWrapper)`
   padding: 16px 32px;
@@ -52,6 +53,7 @@ const Index = () => {
       {!!globalState?.btcAddress ? (
         <FlexRowWrapper className="action-balances-wrapper">
           <FlexColumnWrapper className="trx-transact-wrapper">
+            <SocialLinks />
             <Transact />
             <TrxHistory />
           </FlexColumnWrapper>

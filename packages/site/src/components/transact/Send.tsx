@@ -268,7 +268,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
                 setCustomMemo(e.target.value)
               }
               type="string"
-              placeholder="Custom Memo"
+              placeholder="Custom Memo (Optional)"
             />
             <TooltipInfo placement="bottom">
               Custom memo is a string in following format ↓

@@ -41,7 +41,7 @@ const Disconnected = ({}: DisconnectedProps): JSX.Element => {
           <br />
           Learn more about ZetaMask ↓
         </Typography>
-        <SocialLinks />
+        <SocialLinks isFloatingLeft={false} />
       </FlexColumnWrapper>
       <iframe
         width="560"

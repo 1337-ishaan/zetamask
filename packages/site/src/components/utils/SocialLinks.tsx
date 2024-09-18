@@ -1,15 +1,17 @@
 import styled from 'styled-components/macro';
 import FlexRowWrapper from './wrappers/FlexRowWrapper';
+
 import { ReactComponent as XLogo } from '../../assets/x.svg';
-import { ReactComponent as TelegramLogo } from '../../assets/telegram.svg';
+import { ReactComponent as DiscordLogo } from '../../assets/discord.svg';
 import { ReactComponent as YoutubeLogo } from '../../assets/youtube.svg';
 import { ReactComponent as GitbookLogo } from '../../assets/gitbook.svg';
 
-const SocialLinksWrapper = styled(FlexRowWrapper)`
+const SocialLinksWrapper = styled(FlexRowWrapper)<{ isFloatingLeft?: boolean }>`
   column-gap: 24px;
 
   a.social {
-    background: ${(props) => props.theme.colors?.background?.inverse};
+    background: rgba(152, 152, 152, 0.5);
+
     align-items: center;
     display: flex;
     padding: 12px 12px;
@@ -21,19 +23,44 @@ const SocialLinksWrapper = styled(FlexRowWrapper)`
     &:hover {
       transform: scale(1.2);
       transition: all 0.3s;
+      background: rgba(152, 152, 152, 1);
     }
     .social-logo {
       max-width: 32px;
       max-height: 32px;
     }
   }
+
+  &.floating-left {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    width: fit-content;
+    align-items: center;
+    background: rgba(152, 152, 152, 0.5);
+    z-index: 1;
+    border-top-left-radius: ${(props) => props.theme.borderRadius};
+    border-bottom-left-radius: ${(props) => props.theme.borderRadius};
+    .social {
+      background: transparent;
+      &:hover {
+        transform: unset;
+      }
+    }
+  }
 `;
 
-interface SocialLinksProps {}
+interface SocialLinksProps {
+  isFloatingLeft?: boolean;
+}
 
-const SocialLinks = ({}: SocialLinksProps): JSX.Element => {
+const SocialLinks = ({
+  isFloatingLeft = true,
+}: SocialLinksProps): JSX.Element => {
   return (
-    <SocialLinksWrapper>
+    <SocialLinksWrapper className={isFloatingLeft ? 'floating-left' : ''}>
       <a
         className="social"
         rel="noopener noreferrer"
@@ -51,9 +78,9 @@ const SocialLinks = ({}: SocialLinksProps): JSX.Element => {
       <a
         className="social"
         rel="noopener noreferrer"
-        href="https://t.me/zetamask"
+        href="https://discord.gg/q3Fn36qw5X"
       >
-        <TelegramLogo className="social-logo" />
+        <DiscordLogo className="social-logo" />
       </a>
       <a
         className="social"

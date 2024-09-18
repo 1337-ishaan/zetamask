@@ -53,9 +53,6 @@ const HeaderWrapper = styled(FlexRowWrapper)`
   }
     .disconnect-btn-wrapper{
       background:transparent;
-      // border:1px solid #bfbfbf;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
-      padding:4px 8px;
       .disconnect-icon {
         width: 24px;
         height: 24px;

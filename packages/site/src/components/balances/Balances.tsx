@@ -12,6 +12,7 @@ import BalancePie from './charts/BalancePie';
 import BigNumber from 'bignumber.js';
 import EmptyBalance from './EmptyBalance';
 import { satsToBtc } from '../../utils/satConverter';
+
 interface BalanceData {
   label: string;
   value: number;
