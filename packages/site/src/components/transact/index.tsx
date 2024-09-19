@@ -26,6 +26,7 @@ const TransactWrapper = styled(FlexColumnWrapper)`
       border: 1px solid #eeeeee34;
       height: fit-content;
       min-width: 112px;
+      z-index: 1;
       padding: 24px;
       row-gap: 4px;
       cursor: pointer;

@@ -19,7 +19,7 @@ const AppWrapper = styled(FlexColumnWrapper)`
   margin: 0 auto;
   .action-balances-wrapper {
     column-gap: 24px;
-    @media (min-width: 1440px) {
+    @media (min-width: 1441px) {
       margin-top: 10vh;
     }
   }
@@ -27,7 +27,7 @@ const AppWrapper = styled(FlexColumnWrapper)`
 
   @keyframes animateDropShadow {
     0% { filter: drop-shadow(0 0 160px #676767); }
-    50% { filter: drop-shadow(0 0 0px #eee); }
+    50% { filter: drop-shadow(0 0 10px #676767); }
     100% { filter: drop-shadow(0 0 160px #676767); }
   }
     .page-bg-logo {
@@ -38,7 +38,7 @@ const AppWrapper = styled(FlexColumnWrapper)`
       opacity: 0.1;
       z-index: 1;
       
-      animation: animateDropShadow 5s infinite;
+      animation: animateDropShadow 4s infinite;
    
     }
   }

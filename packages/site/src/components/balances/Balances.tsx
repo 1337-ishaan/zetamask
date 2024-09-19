@@ -93,6 +93,7 @@ const BalancesWrapper = styled(FlexColumnWrapper)`
   .balance-pie-container {
     width: 100%;
     height: 100%;
+    justify-content: space-between;
   }
 `;
 
