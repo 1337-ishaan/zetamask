@@ -36,8 +36,7 @@ const AppWrapper = styled(FlexColumnWrapper)`
       top: 0;
       left: 0;
       opacity: 0.1;
-      z-index: 1;
-      
+      z-index: 0;
       animation: animateDropShadow 4s infinite;
    
     }

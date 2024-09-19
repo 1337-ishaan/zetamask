@@ -28,6 +28,7 @@ const SendWrapper = styled.div`
   height: fit-content;
   flex-direction: column;
   gap: 24px;
+
   width: fit-content;
   background: ${(props) => props.theme.colors.background!.default};
   .inputs-wrapper {

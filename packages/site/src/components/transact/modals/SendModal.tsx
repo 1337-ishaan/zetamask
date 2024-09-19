@@ -6,6 +6,7 @@ import { ReactComponent as CrossIcon } from '../../../assets/cross.svg';
 
 const SendModalWrapper = styled.div`
   position: relative;
+  z-index: 2;
 `;
 
 interface SendModalProps {
@@ -17,6 +18,8 @@ const customStyles = {
   content: {
     top: '50%',
     maxWidth: '40%',
+    zIndex: 2,
+
     left: '50%',
     right: 'auto',
     bottom: 'auto',

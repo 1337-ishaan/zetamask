@@ -16,9 +16,12 @@ const TransactWrapper = styled(FlexColumnWrapper)`
   padding: 24px;
   overflow-y: auto;
   width: auto;
+  z-index: 5;
+
   border-radius: ${(props) => props.theme.borderRadius};
   .actions-wrapper {
     column-gap: 24px;
+    z-index: 2;
     .user-action {
       display: flex;
       flex-direction: column;
@@ -26,7 +29,6 @@ const TransactWrapper = styled(FlexColumnWrapper)`
       border: 1px solid #eeeeee34;
       height: fit-content;
       min-width: 112px;
-      z-index: 1;
       padding: 24px;
       row-gap: 4px;
       cursor: pointer;
@@ -39,6 +41,7 @@ const TransactWrapper = styled(FlexColumnWrapper)`
         transition: all 0.3s;
         box-shadow: 0px 0px 21px 5px rgba(0, 0, 0, 1);
       }
+
       &.coming-soon {
         cursor: disabled !important;
         background: #0e0e0e;
@@ -78,7 +81,10 @@ const Transact = () => {
         />
       </Typography>
       <FlexRowWrapper className="actions-wrapper">
-        <div className="user-action" onClick={() => setIsSendModalOpen(true)}>
+        <div
+          className="user-action send"
+          onClick={() => setIsSendModalOpen(true)}
+        >
           <Arrow />
           <Typography size={24}>Send</Typography>
         </div>

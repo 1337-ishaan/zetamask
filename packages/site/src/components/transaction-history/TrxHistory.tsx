@@ -17,7 +17,7 @@ const TrxHistoryWrapper = styled.div`
   color: #dadada;
   padding: 24px;
   transition: all 0.4s;
-
+  z-index: 3;
   overflow-x: hidden;
   border-radius: ${(props) => props.theme.borderRadius};
   height: 360px;
@@ -70,6 +70,13 @@ const TrxHistoryWrapper = styled.div`
     column-gap: 8px;
 
     .t-filter {
+      transition: all 0.3s;
+
+      &:hover {
+        transition: all 0.3s;
+        box-shadow: 0px 0px 21px 5px rgba(0, 0, 0, 0.5);
+      }
+      z-index: 4;
       cursor: pointer;
 
       &.active {
