@@ -18,8 +18,8 @@ const MAINNET_BLOCKSTREAM_API = `https://blockstream.info/api`;
 const TESTNET_BLOCKCYPHER_API = `https://api.blockcypher.com/v1/btc/test3`;
 const MAINNET_BLOCKCYPHER_API = `https://api.blockcypher.com/v1/btc/main`;
 
-const TESTNET_MEMPOOL = `https://mempool.space/testnet`;
-const MAINNET_MEMPOOL = `https://mempool.space/`;
+const TESTNET_MEMPOOL = `https://mempool.space/testnet/api`;
+const MAINNET_MEMPOOL = `https://mempool.space/api`;
 
 
 const TESTNET_ZETA_BLOCKPI="https://zetachain-athens.blockpi.network/lcd/v1"; // !TODO: Use  BLOCKPI_API from .env

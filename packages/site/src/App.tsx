@@ -22,7 +22,6 @@ export const App = ({ children }: AppProps) => {
         position="top-center"
         transition={Slide}
         hideProgressBar
-        autoClose={false}
       />
       <GlobalStyle />
       <Wrapper>{children}</Wrapper>

@@ -1,11 +1,12 @@
 import type { OnRpcRequestHandler } from '@metamask/snaps-sdk';
 import {
   deriveBtcWallet,
-  getBtcUtxo,
+  getBtcTrxs,
   transactBtc,
   trackCctxTx,
   getBalanceAndRate,
   getFees,
+  fetchUtxo,
 } from './functions';
 
 /**
@@ -36,8 +37,8 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
   switch (request.method) {
     case 'derive-btc-wallet':
       return deriveBtcWallet(request);
-    case 'get-btc-utxo':
-      return getBtcUtxo();
+    case 'get-btc-trxs':
+      return getBtcTrxs();
     case 'get-deposit-fees':
       return getFees();
     case 'get-balance-and-rate':
@@ -46,6 +47,8 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
       return transactBtc(request);
     case 'track-cctx':
       return trackCctxTx(request);
+    case 'get-btc-utxo':
+      return fetchUtxo();
     default:
       throw new Error('Method not found.');
   }

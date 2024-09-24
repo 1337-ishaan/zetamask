@@ -57,7 +57,7 @@ const btcWallet = await window.ethereum.request({
     "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" |"tb1qex3zpp07a0ctu8x00ah4mnyess0900a2dklttr" // mainnet || testnet
 ```
 
-### 2. `get-btc-utxo`
+### 2. `get-btc-trxs`
 
 - **Description**: Fetches unspent transaction outputs (UTXOs) for the connected Bitcoin account.
 - **Parameters**: None.
@@ -69,7 +69,7 @@ const btcUtxo = await window.ethereum.request({
   params: {
     snapId: defaultSnapOrigin,
     request: {
-      method: 'get-btc-utxo',
+      method: 'get-btc-trxs',
       params: [isMainnet],
     },
   },

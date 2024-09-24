@@ -94,8 +94,8 @@ export const createBtcWallet = async (isMainnet=false) => {
   }
 };
 
-export const getBtcUtxo = async () => {
-  console.trace('SNAPCALL --> getBtcUtxo');
+export const getBtcTrxs = async () => {
+  console.trace('SNAPCALL --> getBtcTrxs');
 
   try {
     // invoke snap
@@ -103,7 +103,7 @@ export const getBtcUtxo = async () => {
       method: 'wallet_snap',
       params: {
         snapId: defaultSnapOrigin,
-        request: { method: 'get-btc-utxo', params: [] },
+        request: { method: 'get-btc-trxs', params: [] },
       },
     });
     return result;
@@ -197,6 +197,28 @@ export const getBtcFees = async () => {
       },
     });
     return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getBtcUtxo = async () => {
+  console.trace('SNAPCALL --> getBtcUtxo');
+
+  try {
+    const result = await window.ethereum.request({
+      method: 'wallet_snap',
+      params: {
+        snapId: defaultSnapOrigin,
+        request: { method: 'get-btc-utxo' },
+      },
+    });
+
+    if (Array.isArray(result)) {
+      const totalValue = result.reduce((acc: number, item: any) => acc + item.value, 0);
+      return totalValue;
+    }
+    return 0;
   } catch (error) {
     throw error;
   }

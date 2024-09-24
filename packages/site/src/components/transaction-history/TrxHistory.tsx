@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { getBtcUtxo } from '../../utils';
+import { getBtcTrxs, getBtcUtxo } from '../../utils';
 import styled from 'styled-components';
 import Typography from '../utils/Typography';
 import TrxRow from './TrxRow';
@@ -109,12 +109,13 @@ const TrxHistory: React.FC = () => {
     ) {
       const getBtcTrx = async () => {
         try {
-          const results: any = await getBtcUtxo();
-
+          const results: any = await getBtcTrxs();
+          const utxo: any = await getBtcUtxo();
+          console.log(utxo, 'utxo');
           setGlobalState({
             ...globalState,
             btcTrxs: results,
-            utxo: results?.final_balance - results?.unconfirmed_balance,
+            utxo, //results?.final_balance - results?.unconfirmed_balance,
           });
         } catch (error) {
           console.error(error);
@@ -133,10 +134,15 @@ const TrxHistory: React.FC = () => {
     setGlobalState,
   ]);
 
+  console.log(globalState?.btcTrxs, 'globalState?.btcTrxs');
+
   const getAmount = (trx: any) => {
-    return trx.outputs.filter(
-      (t: any) => t.addresses?.[0] === globalState?.btcAddress,
-    )[0]?.value;
+    return trx?.vout?.find(
+      (t: any) =>
+        t.scriptpubkey_address ===
+          'tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur' ||
+        t.scriptpubkey_address === 'tb1qex3zpp07a0ctu8x00ah4mnyess0900a2dklttr',
+    )?.value;
   };
 
   return (
@@ -172,7 +178,7 @@ const TrxHistory: React.FC = () => {
         </FlexRowWrapper>
       </FlexRowWrapper>
 
-      {globalState?.btcTrxs?.txs.length <= 0 && (
+      {globalState?.btcTrxs?.length <= 0 && (
         <div className="no-transactions">
           <Typography size={22} weight={500}>
             No transactions found 📭
@@ -182,9 +188,11 @@ const TrxHistory: React.FC = () => {
       {isRefetched ? (
         <Loader />
       ) : (
-        globalState?.btcTrxs?.txs?.map((trx: any, index: number) => {
-          const isSent = trx.inputs[0].addresses?.includes(
-            globalState?.btcAddress,
+        globalState?.btcTrxs?.map((trx: any, index: number) => {
+          const isSent = trx.vout.some(
+            (vout: any) =>
+              vout.scriptpubkey_address ===
+              'tb1qy9pqmk2pd9sv63g27jt8r657wy0d9ueeh0nqur',
           );
 
           const shouldRender =
@@ -193,12 +201,14 @@ const TrxHistory: React.FC = () => {
           return (
             shouldRender && (
               <FlexColumnWrapper className="trx-row-wrapper">
-                <TrxRow
-                  key={index}
-                  trx={trx}
-                  isSent={isSent}
-                  amount={getAmount(trx)}
-                />
+                {index < 25 && (
+                  <TrxRow
+                    key={index}
+                    trx={trx}
+                    isSent={isSent}
+                    amount={getAmount(trx)}
+                  />
+                )}
               </FlexColumnWrapper>
             )
           );

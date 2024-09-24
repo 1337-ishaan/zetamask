@@ -8,14 +8,15 @@ import Typography from '../utils/Typography';
 import FlexRowWrapper from '../utils/wrappers/FlexRowWrapper';
 import FlexColumnWrapper from '../utils/wrappers/FlexColumnWrapper';
 import { ReactComponent as RedirectIcon } from '../../assets/redirect.svg';
+
 import CCTXModal from './CCTXModal';
 
 const TrxRowWrapper = styled(FlexRowWrapper)`
   align-items: center;
-  column-gap: 48px;
+  // column-gap: 48px;
   justify-content: space-around;
   width:100%;
-  padding:16px 0;
+  padding:16px 0px;
   
   border-bottom: 1px solid rgba(255,255,255,0.1);
   .redirect-icon {
@@ -64,7 +65,7 @@ interface Trx {
 }
 
 interface TrxRowProps {
-  trx: Trx;
+  trx: any;
   isSent: boolean;
   amount: number;
 }
@@ -74,21 +75,36 @@ const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
   const [cctx, setCctx] = useState<any>({});
   const [trxHash, setTrxHash] = useState('');
 
-  useEffect(() => {
-    const fetchCctx = async () => {
-      if (trxHash) {
-        const cctxData: any = await trackCctx(trxHash);
-        if (cctxData?.code !== 5) {
-          setCctx(cctxData!.CrossChainTx);
-        }
+  // useEffect(() => {
+  //   const fetchCctx = async () => {
+  //     if (trxHash) {
+  //       const cctxData: any = await trackCctx(trxHash);
+  //       if (cctxData?.code !== 5) {
+  //         setCctx(cctxData!.CrossChainTx);
+  //       }
+  //     }
+  //   };
+  //   fetchCctx();
+  // }, [trxHash]);
+
+  console.log(cctx, 'cctx');
+
+  const onTrackCctx = async (trxHash: string) => {
+    try {
+      console.log(trxHash, 'cctx trxHash');
+      const cctxData: any = await trackCctx(trxHash);
+      if (!!cctxData) {
+        setCctx(cctxData);
+        setIsCctxModalOpen(true);
       }
-    };
-    fetchCctx();
-  }, [trxHash]);
+    } catch (error) {
+      console.error('Error tracking cross-chain transaction:', error);
+    }
+  };
 
   return (
     <>
-      <TrxRowWrapper onClick={() => setIsCctxModalOpen(true)}>
+      <TrxRowWrapper onClick={() => onTrackCctx(trx.txid)}>
         <FlexRowWrapper className="trx-hash-wrapper">
           <Arrow isReceived={!isSent} />
           <FlexColumnWrapper className="info-column type-hash-wrapper">
@@ -98,11 +114,11 @@ const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
             <Typography size={14} className="trx-hash">
               BTC trx:
               <a
-                href={`https://mempool.space/testnet/tx/${trx.hash}`}
+                href={`https://mempool.space/testnet/tx/${trx.txid}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {trimHexAddress(trx.hash)}
+                {trimHexAddress(trx.txid)}
                 <RedirectIcon className="redirect-icon" />
               </a>
             </Typography>
@@ -118,7 +134,7 @@ const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
             {isSent ? '-' : '+'}
             {isNaN(amount / 1e8)
               ? '0'
-              : parseFloat((amount / 1e8).toFixed(8)).toString()}
+              : parseFloat((amount / 1e8).toFixed(8)).toString()}{' '}
             BTC
           </Typography>
           <Typography
@@ -126,9 +142,9 @@ const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
             className="status-pill"
             color={trx.confirmations > 6 ? '#ffffff' : 'yellow'}
           >
-            {trx.confirmations > 6
+            {trx?.status?.confirmed
               ? 'Confirmed'
-              : `${trx.confirmations} confirmations`}
+              : `${trx?.status?.confirmations} confirmations`}
           </Typography>
         </FlexColumnWrapper>
       </TrxRowWrapper>
