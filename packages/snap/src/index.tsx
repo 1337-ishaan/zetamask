@@ -19,8 +19,6 @@ import {
  * @throws If the request method is not valid for this snap.
  */
 
-const validOrigins = ['http://localhost:8000', 'https://zetamask.com'];
-
 interface RpcRequest {
   method: string;
   params?: any; // You can further specify this based on your expected parameters
@@ -35,10 +33,6 @@ export const onRpcRequest: OnRpcRequestHandler = async ({
   origin,
   request,
 }: OnRpcRequestArgs) => {
-  if (!validOrigins.includes(origin)) {
-    throw new Error('Invalid origin');
-  }
-
   switch (request.method) {
     case 'derive-btc-wallet':
       return deriveBtcWallet(request);
