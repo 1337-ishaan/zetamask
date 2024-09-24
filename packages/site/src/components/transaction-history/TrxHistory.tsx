@@ -17,7 +17,7 @@ const TrxHistoryWrapper = styled.div`
   color: #dadada;
   padding: 24px;
   transition: all 0.4s;
-  z-index: 3;
+  z-index: 0;
   overflow-x: hidden;
   border-radius: ${(props) => props.theme.borderRadius};
   height: 360px;

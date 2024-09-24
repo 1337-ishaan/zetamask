@@ -16,12 +16,12 @@ const TransactWrapper = styled(FlexColumnWrapper)`
   padding: 24px;
   overflow-y: auto;
   width: auto;
-  z-index: 5;
+  z-index: 0;
 
   border-radius: ${(props) => props.theme.borderRadius};
   .actions-wrapper {
     column-gap: 24px;
-    z-index: 2;
+    z-index: 0;
     .user-action {
       display: flex;
       flex-direction: column;
