@@ -140,11 +140,9 @@ const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
           <Typography
             size={12}
             className="status-pill"
-            color={trx.confirmations > 6 ? '#ffffff' : 'yellow'}
+            color={trx?.status?.confirmed ? '#ffffff' : 'yellow'}
           >
-            {trx?.status?.confirmed
-              ? 'Confirmed'
-              : `${trx?.status?.confirmations} confirmations`}
+            {trx?.status?.confirmed ? 'Confirmed' : `Pending`}
           </Typography>
         </FlexColumnWrapper>
       </TrxRowWrapper>

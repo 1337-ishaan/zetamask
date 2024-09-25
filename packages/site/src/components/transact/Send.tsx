@@ -134,6 +134,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
   const [recipientAddress, setRecipientAddress] = useState<any>('');
   const [isTrxProcessing, setIsTrxProcessing] = useState(false);
   const [customMemo, setCustomMemo] = useState('');
+  const [zetaDepositFees, setZetaDepositFees] = useState<any>();
   const [depositFees, setDepositFees] = useState<any>();
   const { globalState, setGlobalState } = useContext(StoreContext);
 
@@ -148,7 +149,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
         selectedZRC20.zrc20_contract_address,
         +amount,
         customMemo,
-        depositFees,
+        zetaDepositFees,
       );
     } catch (e: unknown) {
       toast(`Error: ${(e as Error).message}`, { hideProgressBar: false });
@@ -175,9 +176,10 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
   useEffect(() => {
     if (!depositFees) {
       const getFees = async () => {
-        let fees = await getBtcFees();
+        let fees: any = await getBtcFees();
         //@ts-ignore next line
-        setDepositFees(fees);
+        setZetaDepositFees(fees?.zetaDepositFees);
+        setDepositFees(fees?.zetaDepositFees + fees?.btcFees);
       };
       getFees();
       return () => {};
@@ -199,7 +201,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
     </div>
   );
 
-  const maxFunds = satsToBtc(globalState?.utxo ?? 0 - depositFees);
+  const maxFunds = satsToBtc(globalState?.utxo - depositFees);
 
   return (
     <SendWrapper>
@@ -233,7 +235,7 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
               <CustomItemRenderer option={item} />
             </div>
           )}
-          values={ZRC20Assets[1]?.symbol}
+          values={ZRC20Assets?.[1]?.symbol}
           onChange={(e) => setSelectedZRC20(e[0])}
           placeholder="Select an option"
         />
@@ -303,51 +305,6 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
           : 'Cross chain transfer BTC to ZetaChain either to specified recipent address, if recipent address is not mentioned the assets will be transferred to connected wallet address'}
       </InfoBox>
 
-      {/* <FlexRowWrapper className="priority-wrapper">
-        <FlexColumnWrapper
-          onClick={() => setSelectedGasPriority('low')}
-          className={`priority-item ${
-            selectedGasPriority === 'low' && 'selected'
-          }`}
-        >
-          <Typography color="#ff4a3d" size={16}>
-            Low
-          </Typography>
-          <Typography color="#ff4a3d" size={14}>
-            ~{((depositFees?.low_fee_per_kb * 2) / 1e8).toFixed(5)} BTC
-          </Typography>
-        </FlexColumnWrapper>
-        <div className="vertical-divider" />
-        <FlexColumnWrapper
-          className={`priority-item ${
-            selectedGasPriority === 'medium' && 'selected'
-          }`}
-          onClick={() => setSelectedGasPriority('medium')}
-        >
-          <Typography color="#eded4c" size={16}>
-            Medium
-          </Typography>
-          <Typography color="#eded4c" size={14}>
-            ~{((depositFees?.medium_fee_per_kb * 2) / 1e8).toFixed(5)} BTC
-          </Typography>
-        </FlexColumnWrapper>
-        <div className="vertical-divider" />
-
-        <FlexColumnWrapper
-          className={`priority-item ${
-            selectedGasPriority === 'high' && 'selected'
-          }`}
-          onClick={() => setSelectedGasPriority('high')}
-        >
-          <Typography color="#008462" size={16}>
-            High
-          </Typography>
-          <Typography color="#008462" size={14}>
-            ~{((depositFees?.high_fee_per_kb * 2) / 1e8).toFixed(5)} BTC
-          </Typography>{' '}
-        </FlexColumnWrapper>
-      </FlexRowWrapper> */}
-
       <FlexRowWrapper className="gas-wrapper">
         <GasIcon className="icon" /> Fees :
         <span className="amount">
@@ -356,9 +313,9 @@ const Send = ({ setIsSendModalOpen }: SendProps): JSX.Element => {
       </FlexRowWrapper>
       <StyledButton
         disabled={
-          false
-          // currentActive === 'zeta' ? !amount : !amount || !selectedZRC20
-          // || maxFunds < 0
+          currentActive === 'zeta'
+            ? !amount
+            : !amount || !selectedZRC20 || maxFunds < 0
         }
         onClick={sendTrx}
       >

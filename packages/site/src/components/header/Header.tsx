@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StoreContext } from '../../hooks/useStore';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { ReactComponent as DisconnectIcon } from '../../assets/disconnect.svg';
@@ -60,8 +60,12 @@ const HeaderWrapper = styled(FlexRowWrapper)`
         color:#bfbfbf;
         transition: color 0.3s all;
         &:hover{
-        transition: color 0.3s all;
+          transition: color 0.3s all;
+          fill:#fff;
         }
+      }
+      &:hover{
+        border:none;
       }
     }
 
@@ -112,7 +116,6 @@ const Header = ({}: HeaderProps): JSX.Element => {
     try {
       await connectSnap();
       setIsSnapInstalled(true);
-      console.log(isSnapInstalled);
 
       if (typeof isMainnet !== 'undefined') {
         const evmAddress = await getEvmAddress();
@@ -127,6 +130,10 @@ const Header = ({}: HeaderProps): JSX.Element => {
     }
   };
 
+  // useEffect(() => {
+  //   setIsSnapInstalled(!!state.installedSnap);
+  // }, [state]);
+
   // Disconnect from the Zeta snap
   const onDisconnectSnap = async () => {
     try {
@@ -138,6 +145,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
     }
   };
 
+  console.log(state, 'is snap installed');
   return (
     <HeaderWrapper>
       <div className="logo-wrapper">
@@ -147,46 +155,48 @@ const Header = ({}: HeaderProps): JSX.Element => {
         </Typography>
       </div>
       <div className="connect-wallet-wrapper">
-        {state.installedSnap || isSnapInstalled ? (
-          <FlexRowWrapper>
-            {!globalState?.btcAddress ? (
-              <FlexRowWrapper className="header-section-disconnected">
-                <Toggle
-                  isMainnet={globalState?.isMainnet}
-                  onToggle={(option) =>
-                    setGlobalState({ ...globalState, isMainnet: option })
-                  }
-                />
-                <StyledButton
-                  onClick={() => onConnectSnap(globalState?.isMainnet)}
-                >
-                  Connect ZetaMask
-                </StyledButton>
-              </FlexRowWrapper>
-            ) : (
-              <FlexRowWrapper className="address-header">
-                <div className="icon-addr-wrapper">
-                  <BitcoinLogo className="chain-icon" />
-                  <Copyable>{globalState?.btcAddress}</Copyable>
-                </div>
+        {/* {isSnapInstalled || state.installedSnap ? ( */}
+        <FlexRowWrapper>
+          {!globalState?.btcAddress ? (
+            <FlexRowWrapper className="header-section-disconnected">
+              <Toggle
+                isMainnet={globalState?.isMainnet}
+                onToggle={(option) =>
+                  setGlobalState({ ...globalState, isMainnet: option })
+                }
+              />
+              <StyledButton
+                onClick={() => onConnectSnap(globalState?.isMainnet)}
+              >
+                {!state.installedSnap ? 'Install' : 'Connect'} ZetaMask
+              </StyledButton>
+            </FlexRowWrapper>
+          ) : (
+            <FlexRowWrapper className="address-header">
+              <div className="icon-addr-wrapper">
+                <BitcoinLogo className="chain-icon" />
+                <Copyable>{globalState?.btcAddress}</Copyable>
+              </div>
 
-                <div className="icon-addr-wrapper">
-                  <ZetaLogo className="chain-icon" />
-                  <Copyable>{globalState?.evmAddress}</Copyable>
-                </div>
+              <div className="icon-addr-wrapper">
+                <ZetaLogo className="chain-icon" />
+                <Copyable>{globalState?.evmAddress}</Copyable>
+              </div>
 
-                <StyledButton
-                  className="disconnect-btn-wrapper"
-                  onClick={onDisconnectSnap}
-                >
-                  <DisconnectIcon className="disconnect-icon" />
-                </StyledButton>
-              </FlexRowWrapper>
-            )}
-          </FlexRowWrapper>
-        ) : (
-          <StyledButton onClick={onConnectSnap}>Install ZetaMask</StyledButton>
-        )}
+              <StyledButton
+                className="disconnect-btn-wrapper"
+                onClick={onDisconnectSnap}
+              >
+                <DisconnectIcon className="disconnect-icon" />
+              </StyledButton>
+            </FlexRowWrapper>
+          )}
+        </FlexRowWrapper>
+        {/* ) : (
+          <StyledButton onClick={() => onConnectSnap(false)}>
+            Install & Connect ZetaMask
+          </StyledButton>
+        )} */}
       </div>
     </HeaderWrapper>
   );

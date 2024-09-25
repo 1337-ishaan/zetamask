@@ -21,7 +21,7 @@ import {
 } from '../constants';
 
 import { Box, Link, Heading, Text } from '@metamask/snaps-sdk/jsx';
-import { btcToSats } from './utils/satConverter';
+import { btcToSats, satsToBtc } from './utils/satConverter';
 
 let isMainnet = false;
 /**
@@ -136,12 +136,16 @@ export const getFees = async () => {
   try {
     const utxo = await fetch(
       `${isMainnet ? MAINNET_MEMPOOL : TESTNET_MEMPOOL}/v1/fees/recommended`,
+      // `${isMainnet ? MAINNET_BLOCKCYPHER_API : TESTNET_BLOCKCYPHER_API}`,
     );
     if (!utxo.ok) {
       throw new Error('Failed to fetch depositFees.');
     }
     const utxoData = await utxo.json();
-    return utxoData.fastestFee * 68 * 2; // zetachain's deposit fee = (high_fee_per_kb * 0.001)sat/vB * 68 sat/vB * 2
+    return {
+      btcFees: utxoData.fastestFee * 2.4,
+      zetaDepositFees: utxoData.fastestFee * 68 * 2,
+    }; // zetachain's deposit fee = (high_fee_per_kb * 0.001)sat/vB * 68 sat/vB * 2
   } catch (error) {
     console.error('Error getting depositFees:', error);
     throw new Error('Failed to retrieve depositFees.');
@@ -154,18 +158,6 @@ export const getFees = async () => {
  * @returns The transaction ID after broadcasting.
  */
 const broadcastTransaction = async (hex: string) => {
-  await snap.request({
-    method: 'snap_dialog',
-    params: {
-      type: 'alert',
-      content: (
-        <Box>
-          <Heading>Track you CCTX transaction: {JSON.stringify(hex)}</Heading>
-        </Box>
-      ),
-    },
-  });
-
   try {
     const response: Response = await fetch(
       `${isMainnet ? MAINNET_MEMPOOL : TESTNET_MEMPOOL}/tx`,
@@ -249,14 +241,24 @@ export const transactBtc = async (request: any) => {
     throw new Error('Invalid request: missing params');
   }
 
+  const [
+    customMemo,
+    depositFeeRaw,
+    recipientAddress,
+    ZRC20ContractAddress,
+    transferAmountRaw,
+  ] = request.params;
+
   const interfaceId = await snap.request({
     method: 'snap_createInterface',
     params: {
       ui: (
         <Box>
-          <Heading>
-            Confirm CCTX BTC transaction {JSON.stringify(request.params)}
-          </Heading>
+          <Heading>Confirm CCTX BTC transaction:</Heading>
+          <Text>Transfer Amount - {'' + transferAmountRaw} BTC</Text>
+          <Text>ZRC20 Contract Address - {'' + ZRC20ContractAddress}</Text>
+          <Text>Recipient Address - {'' + recipientAddress}</Text>
+          <Text>Deposit Fees - {'' + depositFeeRaw} BTC</Text>
         </Box>
       ),
     },
@@ -275,19 +277,21 @@ export const transactBtc = async (request: any) => {
   });
 
   if (result) {
-    // destructuring
-    const [
-      customMemo,
-      depositFeeRaw,
-      recipientAddress,
-      ZRC20ContractAddress,
-      transferAmountRaw,
-    ] = request.params;
+    const depositFee: { zetaDepositFees: number; btcFees: number } =
+      await getFees();
 
-    // const sanitizedRecipientAddress = sanitizeInput(recipientAddress);
-    // const sanitizedZRC20ContractAddress = sanitizeInput(ZRC20ContractAddress);
+    await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'alert',
+        content: (
+          <Box>
+            <Heading>{JSON.stringify(depositFee)}</Heading>
+          </Box>
+        ),
+      },
+    });
 
-    const depositFee = Math.floor(depositFeeRaw) + 1; // sending 1 sat extra to cover depositFees
     const transferAmount =
       Math.floor(btcToSats(parseFloat(transferAmountRaw))) - 1; // subtracting 1 to account for depositFees
 
@@ -355,18 +359,6 @@ export const transactBtc = async (request: any) => {
         customMemo && !!ZRC20ContractAddress ? customMemo : generatedMemo,
         'hex',
       );
-      await snap.request({
-        method: 'snap_dialog',
-        params: {
-          type: 'alert',
-          content: (
-            <Box>
-              <Heading>Memo Buffer: {JSON.stringify(memoBuffer)}</Heading>
-              <Text>Memo : {JSON.stringify(generatedMemo)}</Text>
-            </Box>
-          ),
-        },
-      });
 
       if (memoBuffer.length >= 78) throw new Error('Memo too long');
 
@@ -374,11 +366,14 @@ export const transactBtc = async (request: any) => {
         (a: { value: number }, b: { value: number }) => a.value - b.value,
       );
 
-      if (typeof depositFee !== 'number') {
+      if (typeof depositFee?.zetaDepositFees !== 'number') {
         throw new Error('Invalid deposit fee type');
       }
 
-      const total = transferAmount + depositFee;
+      const total = Math.floor(
+        transferAmount + depositFee.zetaDepositFees! + depositFee.btcFees,
+      );
+
       let sum = 0;
       const pickUtxos = [];
 
@@ -409,9 +404,10 @@ export const transactBtc = async (request: any) => {
           ? bitcoin.networks.bitcoin
           : bitcoin.networks.testnet,
       });
+
       psbt.addOutput({
         address: isMainnet ? MAINNET_ZETA_TSS : TESTNET_ZETA_TSS,
-        value: transferAmount,
+        value: transferAmount + depositFee.zetaDepositFees,
       });
 
       if (memoBuffer.length > 0) {
