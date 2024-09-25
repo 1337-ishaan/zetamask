@@ -22,8 +22,8 @@ const TESTNET_MEMPOOL = `https://mempool.space/testnet/api`;
 const MAINNET_MEMPOOL = `https://mempool.space/api`;
 
 
-const TESTNET_ZETA_BLOCKPI="https://zetachain-athens.blockpi.network/lcd/v1"; // !TODO: Use  BLOCKPI_API from .env
-const MAINNET_ZETA_BLOCKPI="https://zetachain.blockpi.network/lcd/v1";
+const TESTNET_ZETA_BLOCKPI="https://zetachain-athens.blockpi.network/lcd/v1/afa7758ad026d7ae54ff629af5883f53bdd82d73"; // !TODO: Use  BLOCKPI_API from .env
+const MAINNET_ZETA_BLOCKPI="https://zetachain.blockpi.network/lcd/v1/afa7758ad026d7ae54ff629af5883f53bdd82d73";
 
 const TESTNET_ZETA_BLOCKSCOUT = 'https://zetachain-athens-3.blockscout.com/api/v2';
 const MAINNET_ZETA_BLOCKSCOUT = 'https://zetachain.blockscout.com/api/v2';

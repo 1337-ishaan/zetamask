@@ -144,7 +144,7 @@ export const transactBtc = async (
 };
 
 export const trackCctx = async (trxHash:string) => {
-
+console.log(trxHash, 'trxHash ion snap');
   try {
     const result = await window.ethereum.request({
       method: 'wallet_snap',

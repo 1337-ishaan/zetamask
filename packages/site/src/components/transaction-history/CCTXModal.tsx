@@ -74,7 +74,7 @@ const customStyles = {
 };
 
 const CCTXModal = ({
-  cctx = {},
+  cctx,
   isCCTXModalOpen,
   setIsCCTXModalOpen,
 }: CCTXModalProps): JSX.Element => {
@@ -99,7 +99,7 @@ const CCTXModal = ({
           }}
         />
 
-        <CctxItem cctx={mockCctx} />
+        <CctxItem cctx={cctx} />
       </Modal>
     </CCTXModalWrapper>
   );

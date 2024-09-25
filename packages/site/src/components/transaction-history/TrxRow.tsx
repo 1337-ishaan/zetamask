@@ -73,35 +73,21 @@ interface TrxRowProps {
 const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
   const [isCctxModalOpen, setIsCctxModalOpen] = useState(false);
   const [cctx, setCctx] = useState<any>({});
-  const [trxHash, setTrxHash] = useState('');
-
-  // useEffect(() => {
-  //   const fetchCctx = async () => {
-  //     if (trxHash) {
-  //       const cctxData: any = await trackCctx(trxHash);
-  //       if (cctxData?.code !== 5) {
-  //         setCctx(cctxData!.CrossChainTx);
-  //       }
-  //     }
-  //   };
-  //   fetchCctx();
-  // }, [trxHash]);
-
-  console.log(cctx, 'cctx');
 
   const onTrackCctx = async (trxHash: string) => {
     try {
       console.log(trxHash, 'cctx trxHash');
       const cctxData: any = await trackCctx(trxHash);
+
       if (!!cctxData) {
-        setCctx(cctxData);
+        setCctx(cctxData?.CrossChainTx);
         setIsCctxModalOpen(true);
       }
     } catch (error) {
       console.error('Error tracking cross-chain transaction:', error);
     }
   };
-
+  console.log(cctx, 'cctx in trxrow');
   return (
     <>
       <TrxRowWrapper onClick={() => onTrackCctx(trx.txid)}>
@@ -148,6 +134,7 @@ const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
       </TrxRowWrapper>
       {isCctxModalOpen ? (
         <CCTXModal
+          cctx={cctx}
           isCCTXModalOpen={isCctxModalOpen}
           setIsCCTXModalOpen={setIsCctxModalOpen}
         />

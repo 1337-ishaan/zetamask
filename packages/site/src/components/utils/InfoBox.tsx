@@ -10,6 +10,7 @@ const InfoBoxWrapper = styled.div<{ color?: string }>`
   align-items: center;
   column-gap: 8px;
   font-size: 14px;
+  color: #eee;
 
   .info-icon {
     max-width: 24px;
