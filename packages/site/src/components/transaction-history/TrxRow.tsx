@@ -11,13 +11,12 @@ import { ReactComponent as RedirectIcon } from '../../assets/redirect.svg';
 
 import CCTXModal from './CCTXModal';
 
-const TrxRowWrapper = styled(FlexRowWrapper)`
+const TrxRowWrapper = styled(FlexRowWrapper)<{ isSent: boolean }>`
   align-items: center;
   // column-gap: 48px;
   justify-content: space-around;
   width:100%;
   padding:16px 0px;
-  
   border-bottom: 1px solid rgba(255,255,255,0.1);
   .redirect-icon {
     width: 16px;
@@ -52,7 +51,7 @@ const TrxRowWrapper = styled(FlexRowWrapper)`
     transition: transform 0.3s ease-in-out;
 
   &:hover {
-  cursor:pointer;
+    cursor: ${(props) => (props.isSent ? 'pointer' : 'default')};
     transition: transform 0.3s ease-in-out;
     box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.1);
     background: rgba(255,255,255,0.05);
@@ -73,8 +72,16 @@ interface TrxRowProps {
 const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
   const [isCctxModalOpen, setIsCctxModalOpen] = useState(false);
   const [cctx, setCctx] = useState<any>({});
+  const [isCctxClicked, setIsCctxClicked] = useState(false);
+  const [cctxError, setCctxError] = useState('');
 
+  const onCloseCctx = (isOpen: boolean) => {
+    setCctx({});
+    setIsCctxModalOpen(isOpen);
+  };
   const onTrackCctx = async (trxHash: string) => {
+    setIsCctxModalOpen(true);
+
     try {
       console.log(trxHash, 'cctx trxHash');
       const cctxData: any = await trackCctx(trxHash);
@@ -83,14 +90,19 @@ const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
         setCctx(cctxData?.CrossChainTx);
         setIsCctxModalOpen(true);
       }
-    } catch (error) {
+    } catch (error: any) {
+      setCctxError(error?.message);
       console.error('Error tracking cross-chain transaction:', error);
     }
   };
-  console.log(cctx, 'cctx in trxrow');
+  console.log(cctxError, 'cctx in trxrow');
   return (
     <>
-      <TrxRowWrapper onClick={() => onTrackCctx(trx.txid)}>
+      <TrxRowWrapper
+        isSent={isSent}
+        aria-disabled={isCctxClicked}
+        onClick={() => onTrackCctx(trx.txid)}
+      >
         <FlexRowWrapper className="trx-hash-wrapper">
           <Arrow isReceived={!isSent} />
           <FlexColumnWrapper className="info-column type-hash-wrapper">
@@ -132,11 +144,12 @@ const TrxRow: React.FC<TrxRowProps> = ({ trx, isSent, amount }) => {
           </Typography>
         </FlexColumnWrapper>
       </TrxRowWrapper>
-      {isCctxModalOpen ? (
+      {isSent && isCctxModalOpen ? (
         <CCTXModal
           cctx={cctx}
           isCCTXModalOpen={isCctxModalOpen}
-          setIsCCTXModalOpen={setIsCctxModalOpen}
+          setIsCCTXModalOpen={onCloseCctx}
+          cctxError={cctxError}
         />
       ) : null}
     </>

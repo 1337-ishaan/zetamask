@@ -79,8 +79,6 @@ const CctxItem: React.FC<CctxItemProps> = ({ cctx }) => {
   //   return <Typography color="#ff0000">Invalid transaction data.</Typography>;
   // }
 
-  console.log(cctx, 'cctx in trx');
-
   const { inbound_params, outbound_params, cctx_status, index } = cctx;
 
   return (

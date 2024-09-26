@@ -39,7 +39,8 @@ const SocialLinksWrapper = styled(FlexRowWrapper)<{ isFloatingLeft?: boolean }>`
     flex-direction: column;
     width: fit-content;
     align-items: center;
-    background: rgba(152, 152, 152, 0.5);
+
+    background: rgba(255, 255, 255, 0.2);
     z-index: 1;
     border-top-left-radius: ${(props) => props.theme.borderRadius};
     border-bottom-left-radius: ${(props) => props.theme.borderRadius};

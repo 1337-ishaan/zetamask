@@ -480,7 +480,7 @@ export const transactBtc = async (request: any) => {
 export const trackCctxTx = async (request: any) => {
   try {
     const cctxIndex = await fetch(
-      `${isMainnet ? MAINNET_ZETA_BLOCKPI : TESTNET_ZETA_BLOCKPI}/zeta-chain/crosschain/inTxHashToCctx/1c81d891c68b74868c1ea85cbe6f837f997c4c96680dc4f14bc4b6e1c9d33525`, //${request.params[0]}`,
+      `${isMainnet ? MAINNET_ZETA_BLOCKPI : TESTNET_ZETA_BLOCKPI}/zeta-chain/crosschain/inTxHashToCctx/${request.params[0]}`,
     );
     const cctxIndexData = await cctxIndex.json();
     let cctx = cctxIndexData;
