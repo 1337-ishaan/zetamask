@@ -1,6 +1,6 @@
 {
   "name": "zetamask",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "The only MetaMask snap allowing users to deposit their native BTC to any supported ZRC20 asset on ZetaChain.",
   "repository": {
     "type": "git",

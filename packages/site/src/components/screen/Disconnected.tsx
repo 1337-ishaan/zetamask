@@ -48,7 +48,8 @@ const Disconnected = ({}: DisconnectedProps): JSX.Element => {
       <iframe
         width="560"
         height="400"
-        src="https://www.youtube.com/embed/_HDjDUDkdnQ?si=VYmO7DbJIBbjYtpK"
+        style={{ width: '100%' }}
+        src="https://www.youtube.com/embed/Djm_Fw5Zdxk?si=MggAAQ274SbeWyOc"
         title="YouTube video player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; 22gyroscope; picture-in-picture; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
