@@ -195,8 +195,8 @@ const broadcastTransaction = async (hex: string) => {
 };
 
 /**
- * Fetches unspent transaction outputs (UTXOs) for a specific Bitcoin btcAddress.
- * @param btcAddress - The Bitcoin btcAddress to check for UTXOs.
+ * Fetches unspent transaction outputs (UTXOs) for a specific Bitcoin address.
+ * @param None.
  * @returns The UTXO data.
  */
 export const fetchUtxo = async () => {
@@ -504,10 +504,10 @@ export const trackCctxTx = async (request: any) => {
 export const getBalanceAndRate = async (request: any) => {
   try {
     if (request.params[0]) {
-      const btcAddress = convertToZeta(request.params[0]);
+      const evmAddress = convertToZeta(request.params[0]);
 
       const zeta = await fetch(
-        `${isMainnet ? MAINNET_ZETA_BLOCKPI : TESTNET_ZETA_BLOCKPI}/public/cosmos/bank/v1beta1/spendable_balances/${btcAddress}`,
+        `${isMainnet ? MAINNET_ZETA_BLOCKPI : TESTNET_ZETA_BLOCKPI}/public/cosmos/bank/v1beta1/spendable_balances/${evmAddress}`,
       );
       const nonZeta = await fetch(
         `${isMainnet ? MAINNET_ZETA_BLOCKSCOUT : TESTNET_ZETA_BLOCKSCOUT}/addresses/${request.params[0]}/token-balances`,

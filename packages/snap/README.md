@@ -1,16 +1,16 @@
-# ZetaMask Snap
+# ZetaLink MetaMask Snap
 
 ## Overview
 
-ZetaMask Snap allows users to interact with Bitcoin and ZetaChain through various JSON-RPC methods.
+ZetaLink Snap allows users to interact with Bitcoin and ZetaChain through various JSON-RPC methods.
 
-The ZetaMask Snap is a powerful tool that enhances the functionality of MetaMask, allowing users to seamlessly interact with both Bitcoin and ZetaChain. By providing a suite of JSON-RPC methods, this snap enables developers to build innovative applications that leverage the strengths of both ecosystems.
+The ZetaLink Snap is a powerful tool that enhances the functionality of MetaMask, allowing users to seamlessly interact with both Bitcoin and ZetaChain. By providing a suite of JSON-RPC methods, this snap enables developers to build innovative applications that leverage the strengths of both ecosystems.
 
-From a user's perspective, the ZetaMask Snap offers several benefits that enhance their interaction with the ZetaChain ecosystem:
+From a user's perspective, the ZetaLink Snap offers several benefits that enhance their interaction with the ZetaChain ecosystem:
 
-- **Seamless Bitcoin Integration**: The ZetaMask Snap allows users to easily access and manage their Bitcoin assets directly within MetaMask, making it simpler to engage with ZetaChain and its applications.
-- **Streamlined User Experience**: The snap's user-friendly interface and comprehensive features ensure a smooth and intuitive experience for users, encouraging them to explore and utilize the ZetaChain ecosystem more extensively.
-- **Expanded Access to ZetaChain**: By providing a convenient gateway to ZetaChain through MetaMask, the ZetaMask Snap enables users to discover and interact with a broader range of ZetaChain-based applications and services.
+- **Seamless Bitcoin Integration**: ZetaLink Snap allows users to easily access and manage their Bitcoin assets directly within MetaMask, making it simpler to engage with ZetaChain and its applications.
+- **Streamlined User Experience**: ZetaLink's user-friendly interface and comprehensive features ensure a smooth and intuitive experience for users, encouraging them to explore and utilize the ZetaChain ecosystem more extensively.
+- **Expanded Access to ZetaChain**: By providing a convenient gateway to ZetaChain through MetaMask, the ZetaLink Snap enables users to discover and interact with a broader range of ZetaChain-based applications and services.
 
 ## Available Methods
 
@@ -18,7 +18,7 @@ From a user's perspective, the ZetaMask Snap offers several benefits that enhanc
 
 ### 0. `wallet_requestSnaps`
 
-- **Description**: Installs the ZetaMask Snap, which is the first step required to use the below mentioned API methods.
+- **Description**: Installs the ZetaLink Snap, which is the first step required to use the below mentioned API methods.
 - **Parameters**: None.
 - **Implementation**:
 
@@ -64,13 +64,13 @@ const btcWallet = await window.ethereum.request({
 - **Implementation**:
 
 ```javascript
-const btcUtxo = await window.ethereum.request({
+const btcTrxs = await window.ethereum.request({
   method: 'wallet_snap',
   params: {
     snapId: defaultSnapOrigin,
     request: {
       method: 'get-btc-trxs',
-      params: [isMainnet],
+      params: [],
     },
   },
 });
@@ -117,7 +117,7 @@ const btcUtxo = await window.ethereum.request({
 ### 3. `get-deposit-fees`
 
 - **Description**: Retrieves the current Bitcoin deposit transaction fees
-  `ZetaChain deposit fees = (high_priority_fees_in_kb * 0.001)vB * 68vB * 2`.
+  `zetaDepositFees = (high_priority_fees_in_kb * 0.001)vB * 68vB * 2`.
 - **Parameters**: None.
 - **Implementation**:
 
@@ -136,14 +136,17 @@ const depositFees = await window.ethereum.request({
 - **Mock Successful Response**:
 
 ```JSON
-    945910 // (sats)
+    {
+        btcFees:1,
+        getzetaDepositFees:136
+    }
 ```
 
 ### 4. `get-balance-and-rate`
 
 - **Description**: Retrieves the balance for a given address and exchange rates for Zeta and Bitcoin.
 - **Parameters**:
-  - `address`: The Zeta or Ethereum address to check.
+  - `address`: Ethereum Address to fetch data for.
 - **Implementation**:
 
 ```javascript
@@ -205,7 +208,7 @@ const balanceAndRate = await window.ethereum.request({
 - **Implementation**:
 
 ```javascript
-const transactHash = await window.ethereum.request({
+const transactionHash = await window.ethereum.request({
   method: 'wallet_snap',
   params: {
     snapId: defaultSnapOrigin,
@@ -237,12 +240,12 @@ const transactHash = await window.ethereum.request({
 - **Implementation**:
 
 ```javascript
-const transactHash = await window.ethereum.request({
+const cctx = await window.ethereum.request({
   method: 'wallet_snap',
   params: {
     snapId: defaultSnapOrigin,
     request: {
-      method: 'transact-btc',
+      method: 'track-cctx',
       params: [transactionHash],
     },
   },
@@ -299,10 +302,53 @@ const transactHash = await window.ethereum.request({
     ]
   }
 }
+
 ```
 
-## Valid Origins
+### 7. `get-btc-utxo`
 
-The snap only accepts requests from the following origins:
+- **Description**: Fetches unspent transaction outputs (UTXOs) for a specific Bitcoin address.
+- **Parameters**:None
+- **Implementation**:
 
-- `https://zetamask.com`
+```javascript
+const utxo = await window.ethereum.request({
+  method: 'wallet_snap',
+  params: {
+    snapId: defaultSnapOrigin,
+    request: {
+      method: 'get-btc-utxo',
+      params: [],
+    },
+  },
+});
+```
+
+- **Mock Successful Response**:
+
+```JSON
+[
+  {
+    "txid": "b85f387b72729af2046f545e14c45350f4ac17cad58a5bc7018ce0c1b33cbd32",
+    "vout": 0,
+    "status": {
+      "confirmed": true,
+      "block_height": 3001990,
+      "block_hash": "00000000000006c7fce225b1b9fdbc2297d39b6bbf5a92befd637b44c2a9e382",
+      "block_time": 1727198799
+    },
+    "value": 18126
+  },
+  {
+    "txid": "1c81d891c68b74868c1ea85cbe6f837f997c4c96680dc4f14bc4b6e1c9d33525",
+    "vout": 2,
+    "status": {
+      "confirmed": true,
+      "block_height": 3004316,
+      "block_hash": "00000000000003065681d73252d291a13edc49d4fb5276843f8080357b3a890b",
+      "block_time": 1727271387
+    },
+    "value": 4484
+  }
+]
+```

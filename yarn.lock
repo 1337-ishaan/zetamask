@@ -19538,7 +19538,7 @@ __metadata:
     rimraf: 3.0.2
     styled-components: 5.3.3
     typescript: ^5.5.4
-    zetamask: "workspace:^"
+    zetalink: "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -22153,9 +22153,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zetamask@workspace:^, zetamask@workspace:packages/snap":
+"zetalink@workspace:^, zetalink@workspace:packages/snap":
   version: 0.0.0-use.local
-  resolution: "zetamask@workspace:packages/snap"
+  resolution: "zetalink@workspace:packages/snap"
   dependencies:
     "@bitcoinerlab/secp256k1": ^1.1.1
     "@jest/globals": ^29.5.0

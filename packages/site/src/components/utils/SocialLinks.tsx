@@ -86,7 +86,7 @@ const SocialLinks = ({
       <a
         className="social"
         rel="noopener noreferrer"
-        href="https://docs.zetamask.com"
+        href="https://docs.zetalink.xyz"
       >
         <GitbookLogo className="social-logo" />
       </a>

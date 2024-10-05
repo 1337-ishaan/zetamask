@@ -1,10 +1,10 @@
 {
-  "name": "zetamask",
-  "version": "0.2.5",
-  "description": "The only MetaMask snap allowing users to deposit their native BTC to any supported ZRC20 asset on ZetaChain.",
+  "name": "zetalink",
+  "version": "0.1.2",
+  "description": "ZetaLink is a MetaMask snap allowing users to bridge & cross-chain transfer their native Bitcoin to any supported ZRC20 asset & native ZETA on ZetaChain, Ethereum, Polygon and Binance Smart Chain.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/1337-ishaan/zetamask"
+    "url": "git+https://github.com/1337-ishaan/zetalink"
   },
   "keywords": [
     "metamask",
@@ -22,7 +22,11 @@
     "smart-contract",
     "dapp",
     "crypto",
-    "omnichain"
+    "omnichain",
+    "bitcoin-snap",
+    "bitcoin-interoperability",
+    "zetachain-interoperability",
+    "interoperability-snap"
   ],
   "license": "(MIT-0 OR Apache-2.0)",
   "main": "./dist/bundle.js",
