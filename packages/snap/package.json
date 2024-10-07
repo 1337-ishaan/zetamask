@@ -1,7 +1,7 @@
 {
   "name": "zetalink",
-  "version": "0.1.2",
-  "description": "ZetaLink is a MetaMask snap allowing users to bridge & cross-chain transfer their native Bitcoin to any supported ZRC20 asset & native ZETA on ZetaChain, Ethereum, Polygon and Binance Smart Chain.",
+  "version": "0.1.3",
+  "description": "ZetaLink enables users to bridge and cross-chain transfer native Bitcoin to select ZRC20 tokens across ZetaChain, Ethereum, Binance Smart Chain & Polygon, offering seamless cross-chain functionality and enhanced interoperability",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/1337-ishaan/zetalink"

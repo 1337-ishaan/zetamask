@@ -34,27 +34,37 @@ const Disconnected = ({}: DisconnectedProps): JSX.Element => {
     <DisconnectedWrapper>
       <FlexColumnWrapper className="supported-resources">
         <Typography size={24} weight={300}>
-          Welcome to ZetaMask 🎉
+          Welcome to ZetaLink 🎉
           <br />
-          <br /> The only ZetaChain Metamask Snap allowing you to bridge native
-          BTC to supported ZRC20 asset.
+          <br /> The only Metamask Snap allowing you to bridge native BTC to
+          supported ZRC20 asset on ZetaChain, Ethereum, Binance Smart Chain &
+          Polygon.
           <br />
           <br />
           <br />
-          Learn more about ZetaMask ↓
+          Learn more about ZetaLink ↓
         </Typography>
         <SocialLinks isFloatingLeft={false} />
       </FlexColumnWrapper>
       <iframe
         width="560"
+        height="315"
+        src="https://www.youtube.com/embed/xTu6RreLxLQ?si=7aHJuZ27hi5kQWZ_"
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+      ></iframe>
+      {/* <iframe
+        width="560"
         height="400"
         style={{ width: '100%' }}
-        src="https://www.youtube.com/embed/Djm_Fw5Zdxk?si=MggAAQ274SbeWyOc"
+        src="https://youtu.be/xTu6RreLxLQ"
         title="YouTube video player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; 22gyroscope; picture-in-picture; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen
-      ></iframe>
+      ></iframe> */}
     </DisconnectedWrapper>
   );
 };

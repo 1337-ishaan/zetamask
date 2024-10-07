@@ -168,7 +168,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
               <StyledButton
                 onClick={() => onConnectSnap(globalState?.isMainnet)}
               >
-                {!state.installedSnap ? 'Install' : 'Connect'} ZetaMask
+                {!state.installedSnap ? 'Install' : 'Connect'} ZetaLink
               </StyledButton>
             </FlexRowWrapper>
           ) : (
@@ -194,7 +194,7 @@ const Header = ({}: HeaderProps): JSX.Element => {
         </FlexRowWrapper>
         {/* ) : (
           <StyledButton onClick={() => onConnectSnap(false)}>
-            Install & Connect ZetaMask
+            Install & Connect ZetaLink
           </StyledButton>
         )} */}
       </div>
