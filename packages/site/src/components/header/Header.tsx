@@ -87,6 +87,11 @@ const HeaderWrapper = styled(FlexRowWrapper)`
       color:#000;
      }
     }
+     .faucet-btn-wrapper{
+     display:flex;
+     column-gap:8px;
+     align-items:center;
+     }
   `;
 
 interface HeaderProps {}
@@ -182,6 +187,22 @@ const Header = ({}: HeaderProps): JSX.Element => {
                 <ZetaLogo className="chain-icon" />
                 <Copyable>{globalState?.evmAddress}</Copyable>
               </div>
+
+              {!globalState.isMainnet ? (
+                <StyledButton
+                  className="faucet-btn-wrapper"
+                  onClick={() =>
+                    window.open(
+                      'https://docs.zetalink.xyz/requesting-funds-from-faucet-testnet',
+                      '_blank',
+                    )
+                  }
+                >
+                  Faucet <BitcoinLogo className="faucet-icon" />
+                </StyledButton>
+              ) : (
+                <></>
+              )}
 
               <StyledButton
                 className="disconnect-btn-wrapper"

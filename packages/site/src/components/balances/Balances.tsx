@@ -204,75 +204,74 @@ const Balances = ({}: BalancesProps): JSX.Element => {
         />
       </Typography>
 
-      <div className="input-container">
-        <input
-          placeholder="Search Asset"
-          onChange={(e) => handleSearch(e.target.value)}
-          className="searched-input"
-        />
-      </div>
-
-      {error && (
-        <div className="error-message">
-          "Error loading balances, {error + ''}
-        </div>
-      )}
-
       <FlexColumnWrapper className="balance-pie-container">
         {data.length >= 2 && data[0]!.value + data[1]!.value > 0 ? (
-          <BalancePie data={data} />
+          <>
+            <div className="input-container">
+              <input
+                placeholder="Search Asset"
+                onChange={(e) => handleSearch(e.target.value)}
+                className="searched-input"
+              />
+            </div>
+            {error && (
+              <div className="error-message">
+                "Error loading balances, {error + ''}
+              </div>
+            )}
+            <BalancePie data={data} />
+            <table>
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Amount</th>
+                  <th>Amount ($)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(searched.length > 0 ? searched : data).map((item, index) => (
+                  <tr key={index}>
+                    <td>
+                      <Typography size={14}>
+                        {item.label === 'BTC' ? (
+                          <BtcIcon className="chain-icon" />
+                        ) : (
+                          <ZetaIcon className="chain-icon" />
+                        )}
+                        {item.label}
+                      </Typography>
+                    </td>
+                    <td>
+                      <Typography size={14}>
+                        {parseFloat(item.value.toString()).toLocaleString(
+                          undefined,
+                          {
+                            minimumSignificantDigits: 1,
+                            maximumSignificantDigits: 8,
+                          },
+                        )}{' '}
+                        {item.label}
+                      </Typography>
+                    </td>
+                    <td>
+                      {!globalState.isMainnet
+                        ? 0
+                        : parseFloat(item.usdPrice!.toString()).toLocaleString(
+                            undefined,
+                            {
+                              minimumSignificantDigits: 1,
+                              maximumSignificantDigits: 8,
+                            },
+                          )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         ) : (
           <EmptyBalance />
         )}
-
-        <table>
-          <thead>
-            <tr>
-              <th>Asset</th>
-              <th>Amount</th>
-              <th>Amount ($)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(searched.length > 0 ? searched : data).map((item, index) => (
-              <tr key={index}>
-                <td>
-                  <Typography size={14}>
-                    {item.label === 'BTC' ? (
-                      <BtcIcon className="chain-icon" />
-                    ) : (
-                      <ZetaIcon className="chain-icon" />
-                    )}
-                    {item.label}
-                  </Typography>
-                </td>
-                <td>
-                  <Typography size={14}>
-                    {parseFloat(item.value.toString()).toLocaleString(
-                      undefined,
-                      {
-                        minimumSignificantDigits: 1,
-                        maximumSignificantDigits: 8,
-                      },
-                    )}{' '}
-                    {item.label}
-                  </Typography>
-                </td>
-                <td>
-                  {!globalState.isMainnet
-                    ? 0
-                    : parseFloat(item.usdPrice!.toString()).toLocaleString(
-                        undefined,
-                        {
-                          minimumSignificantDigits: 1,
-                          maximumSignificantDigits: 8,
-                        },
-                      )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </FlexColumnWrapper>
     </BalancesWrapper>
   );

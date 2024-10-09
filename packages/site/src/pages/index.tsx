@@ -66,7 +66,7 @@ const Index = () => {
     >
       <Logo className="page-bg-logo" />
       <Header />
-      {!!globalState?.btcAddress && isMetaMaskReady ? (
+      {!!globalState?.btcAddress ? (
         <FlexRowWrapper className="action-balances-wrapper">
           <FlexColumnWrapper className="trx-transact-wrapper">
             <SocialLinks />
